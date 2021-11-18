@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.game_shop.mapper.UserMapper">
+    <insert id="addGame" parameterType="com.example.game_shop.pojo.Game" useGeneratedKeys="true" keyProperty="id">
+        insert into game(name, platform, stock, price)
+            VALUE (#{name}, #{platform}, #{stock}, #{price})
+    </insert>
+    <select id="getGameById">
+        select *
+        from game
+        where id = #{id}
+    </select>
+    <select id="getGameList" resultType="com.example.game_shop.pojo.Game">
+        select *
+        from game
+        where platform=#{platform}
+    </select>
+    <update id="updateGameInfo" parameterType="com.example.game_shop.pojo.Game">
+        update game
+        <set>
+            <if test="name != ''">name=#{name}</if>
+            <if test="price > 0">price=#{price}</if>
+            <if test="status != null">status=#{status}</if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="queryGame" resultType="com.example.game_shop.pojo.Game">
+        select * from game
+        <where>
+            <if test="name != null">name like concat('%', #{name}, '%')</if>
+            <if test="platform != null">platform=#{platform}</if>
+            <if test="true">status='正常'</if>
+        </where>
+    </select>
+</mapper>

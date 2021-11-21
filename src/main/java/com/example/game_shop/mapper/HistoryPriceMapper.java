@@ -1,5 +1,7 @@
 package com.example.game_shop.mapper;
 
+import com.example.game_shop.pojo.Game;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -18,4 +20,10 @@ public interface HistoryPriceMapper {
             where gid=#{gid}
             """)
     List<Map<String, String>> getHistoryPriceById(long gid);
+
+    @Insert("""
+            insert into history_price(gid, price)
+            values (#{id}, #{price})
+            """)
+    int addRecord(Game game);
 }

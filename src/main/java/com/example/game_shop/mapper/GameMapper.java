@@ -17,7 +17,7 @@ public interface GameMapper {
             values (#{name}, #{platform}, #{stock}, #{price})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    void addGame(Game game);
+    int insertGame(Game game);
 
     @Results(id = "game", value = {
             @Result(property = "id", column = "id"),
@@ -25,26 +25,34 @@ public interface GameMapper {
             @Result(property = "platform", column = "platform"),
             @Result(property = "stock", column = "stock"),
             @Result(property = "price", column = "price"),
+            @Result(property = "status", column = "status"),
             @Result(property = "images", column = "id",
                     many = @Many(select = "com.example.game_shop.mapper.GamePictureMapper.getPicturesByGameId")),
             @Result(property = "history_price", column = "id",
                     many = @Many(select = "com.example.game_shop.mapper.HistoryPriceMapper.getHistoryPriceById")),
     })
     @Select("""
-            select *
+            select id,
+                   name,
+                   platform,
+                   stock,
+                   price,
+                   status
             from game
             where id = #{id}
             """)
     Game getGameById(long id);
 
     @Select("""
-            select id, name, price, cover_image
-            from game
-            where platform=#{platform}
-              and status='正常'
+            <script>
+                select count(*)
+                from game
+                <foreach collection="idList" item="id" open="where" separator="or">
+                    id=#{id}
+                </foreach>
+            </script>
             """)
-    //这个非常有可能用不到，和下面的查询游戏完全一致。
-    List<BasicGameInfo> getGameList(String platform);
+    int hasN(List<Integer> idList);
 
     @Update("""
             <script>
@@ -57,14 +65,14 @@ public interface GameMapper {
                 where id=#{id}
             </script>
             """)
-    void updateGameInfo(Game game);
+    int updateGameInfo(Game game);
 
     @Select("""
             <script>
                 select id, name, price, cover_image
                 from game
                 <where>
-                    <if test="name != null">and name like concat('%', #{name}, '%')</if>
+                    <if test="name != ''">and name like concat('%', #{name}, '%')</if>
                     <if test="platform != null">and platform=#{platform}</if>
                     <if test="true">and status='正常'</if>
                 </where>

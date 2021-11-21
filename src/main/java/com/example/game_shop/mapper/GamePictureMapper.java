@@ -1,9 +1,6 @@
 package com.example.game_shop.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -16,7 +13,25 @@ public interface GamePictureMapper {
     @Select("""
             select url
             from game_picture
-            where gid=#{id}
+            where gid=#{gid}
+            order by id
             """)
     List<String> getPicturesByGameId(long gid);
+
+    @Delete("""
+            delete
+            from game_picture
+            where gid=#{gid}
+            """)
+    int deletePicture(long gid);
+
+    @Insert("""
+            <script>
+                insert into game_picture(gid,url)
+                <foreach collection="list" item="url" open="values" separator=",">
+                    (#{gid}, #{url})
+                </foreach>
+            </script>
+            """)
+    int addPicture(@Param("gid") long gid, @Param("list") List<String> urls);
 }

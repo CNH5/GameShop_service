@@ -1,6 +1,8 @@
 package com.example.game_shop.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.Map;
  * @date 2021/11/17 9:18
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Game {
     private long id;
 
@@ -24,6 +28,9 @@ public class Game {
 
     @NonNull
     private double price;
+
+    @NonNull
+    private String status;
 
     private List<String> images;
 

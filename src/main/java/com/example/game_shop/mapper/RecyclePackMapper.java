@@ -26,41 +26,53 @@ public interface RecyclePackMapper {
             from recycle_pack rp
                      join game g on rp.gid = g.id
             where account = #{account}
+              and type = #{type}
             """)
-    List<RecyclePackGame> getGamesByAccount(long account);
+    List<RecyclePackGame> getGames(String account, String type);
+
+    @Select("""
+            select count(*) > 0
+            from recycle_pack
+            where account = #{account}
+              and gid = #{id}
+              and type = #{type}
+            """)
+    boolean hasGame(String account, long id, String type);
 
     @Delete("""
             <script>
                 delete
                 from recycle_pack
-                where account=#{account}
+                where account = #{account}
+                  and type = #{type}
                 <trim prefix="and" suffixOverrides="or">
                     <foreach collection="list" item="id" separator="or">
-                        gid=#{id}
+                        gid = #{id}
                     </foreach>
                 </trim>
             </script>
             """)
-    void deleteGame(Map<String, Object> deleteForm);
+    int deleteGames(@Param("account") String account, @Param("type") String type, @Param("list") List<Long> idList);
 
     @Update("""
             <script>
                 update recycle_pack
                 <trim prefix="set" suffixOverrides=",">
                     <trim prefix="num=case" suffix="end,">
-                        <foreach collection="list" item="game">
-                            when id=#{game.id} then #{game.num}
+                        <foreach collection="numList" item="game">
+                            when gid=#{game.id} then #{game.num}
                         </foreach>
                      </trim>
                 </trim>
-                where account=#{account}
+                where account = #{account}
+                  and type = #{type}
             </script>
             """)
-    void updateNum(Map<String, Object> updateForm);
+    int updateNum(@Param("account") String account, @Param("type") String type, @Param("numList") List<Map<String, Object>> numList);
 
     @Insert("""
-            insert into recycle_pack(account, gid, price)
-            values (#{account}, #{gid}, #{price})
+            insert into recycle_pack(account, gid, price, type)
+            values (#{account}, #{gid}, #{price}, #{type})
             """)
-    void addGame(String account, long gid, double price);
+    int addGame(String account, long gid, double price, String type);
 }

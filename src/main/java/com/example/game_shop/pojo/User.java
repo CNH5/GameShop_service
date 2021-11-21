@@ -1,7 +1,6 @@
 package com.example.game_shop.pojo;
 
 import lombok.Data;
-import lombok.NonNull;
 
 /**
  * @author sheng
@@ -9,8 +8,7 @@ import lombok.NonNull;
  */
 @Data
 public class User {
-    @NonNull private String account;
-    private String password;
+    private String account;
     private String name;
     private String avatar;
     private String gender;

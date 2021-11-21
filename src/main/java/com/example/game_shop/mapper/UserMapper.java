@@ -17,9 +17,9 @@ public interface UserMapper {
     @Insert("""
             insert into
             user(account, password, name)
-            VALUE (#{account}, #{password}, #{name})
+            value (#{account}, #{password}, #{name})
             """)
-    void insertUser(User user);
+    int insertUser(String account, String password, String name);
 
     @Select("""
             select account, name, avatar, gender, regdate
@@ -36,23 +36,37 @@ public interface UserMapper {
     String getPassword(String account);
 
     @Select("""
+            select name
+            from user
+            where name=#{name}
+            """)
+    String getName(String name);
+
+    @Select("""
+            select ident
+            from user
+            where account=#{account}
+            """)
+    String getIdent(String account);
+
+    @Select("""
             <script>
                 select account, name, avatar, gender, regdate
                 from user
                 <where>
                     <if test="account != null">
-                        and account like concat('%', #{account}, '%'),
+                        and account like concat('%', #{account}, '%')
                     </if>
                     <if test="name != null">
-                        and name like concat('%', #{name}, '%'),
+                        and name like concat('%', #{name}, '%')
                     </if>
                     <if test="gender != null">
-                        and gender=#{gender},
+                        and gender=#{gender}
                     </if>
                 </where>
             </script>
             """)
-    List<User> queryUser(User user);
+    List<User> queryUsers(User user);
 
     @Update("""
             <script>
@@ -71,5 +85,5 @@ public interface UserMapper {
                 where account=#{account}
             </script>
             """)
-    void updateUser(User user);
+    int updateUser(User user);
 }

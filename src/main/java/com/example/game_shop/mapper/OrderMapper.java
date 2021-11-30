@@ -2,6 +2,7 @@ package com.example.game_shop.mapper;
 
 import com.example.game_shop.pojo.BasicOrder;
 import com.example.game_shop.pojo.Order;
+import com.example.game_shop.pojo.OrderForm;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -27,10 +28,12 @@ public interface OrderMapper {
                 <where>
                     <if test="true">and account = #{account}</if>
                     <if test="type != null">and type = #{type}</if>
+                    <if test="status == 'false'">and express_delivery_id is null</if>
+                    <if test="status == 'true'">and express_delivery_id is not null</if>
                 </where>
             </script>
             """)
-    List<BasicOrder> getOrderList(String account, String type);
+    List<BasicOrder> getOrderList(String account, String status, String type);
 
 
     @Results(id = "order", value = {
@@ -55,12 +58,11 @@ public interface OrderMapper {
 
     @Insert("""
             insert into
-            orders(account, name, type, location, phoneNumber, express_delivery_company, express_delivery_id)
-            values(#{account}, #{order.name}, #{order.type}, #{order.location},
-                   #{order.phoneNumber}, #{order.express_delivery_company}, #{order.express_delivery_id})
+            orders(account, name, type, location, phoneNumber)
+            values(#{account}, #{order.name}, #{order.type}, #{order.location}, #{order.phoneNumber})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "order.id")
-    int insert(@Param("account") String account, @Param("order") Order order);
+    int insert(@Param("account") String account, @Param("order") OrderForm form);
 
 
     @Update("""
@@ -70,5 +72,5 @@ public interface OrderMapper {
                 phoneNumber=#{order.phoneNumber}
             where account=#{account} and id=#{order.id}
             """)
-    int updateReceiverInfo(@Param("account") String account, @Param("order") Order order);
+    int updateReceiverInfo(@Param("account") String account, @Param("order") OrderForm order);
 }

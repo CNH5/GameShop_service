@@ -34,7 +34,7 @@ class GameServiceTest {
 
     @Test
     void queryGame() {
-        for (BasicGameInfo g: gameService.queryGame("塞尔达","NS")){
+        for (BasicGameInfo g : gameService.queryGame("", "NS", 1).getData()) {
             System.out.println(g);
         }
     }

@@ -1,78 +1,85 @@
 package com.example.game_shop.controller;
 
+import com.example.game_shop.Result.Result;
 import com.example.game_shop.pojo.User;
 import com.example.game_shop.service.UserService;
-import org.springframework.stereotype.Controller;
+import com.example.game_shop.utils.ResultUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @author sheng
  * @date 2021/11/18 23:40
  */
-@Controller
 @CrossOrigin
+@RestController
 @RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;
 
-    @ResponseBody
-    @PostMapping("/login")
-    public String login(@RequestParam("account") String account, @RequestParam("password") String password) {
-        if ("".equals(account) || "".equals(password)) {
-            return "账号或密码不能为空";
-        }
 
-        String real_password = userService.getPassword(account);
-        if (real_password != null) {
-            if (real_password.equals(password)) {
-                return "登陆成功";
-            } else {
-                return "密码错误";
-            }
-        } else {
-            return "账号不存在";
+    @PostMapping("/login")
+    public Result<String> login(@RequestParam("account") String account,
+                                @RequestParam("password") String password,
+                                HttpServletResponse response) {
+        try {
+            return userService.doLogin(account, password, response);
+        } catch (Exception e) {
+            // 系统出错
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
         }
     }
 
 
-    @ResponseBody
     @PostMapping("/register")
-    public String register(@RequestParam("account") String account, @RequestParam("password") String password) {
-        if ("".equals(account) || "".equals(password)) {
-            return "账号或密码不能为空";
-        }
-
-        if (userService.noUser(account)) {
-            return "账号已存在";
-
-        } else {
-            userService.addUser(account, password);
-            return "注册成功";
+    public Result<String> register(@RequestParam("account") String account,
+                                   @RequestParam("password") String password) {
+        try {
+            return userService.doRegister(account, password);
+        } catch (Exception e) {
+            // 系统出错
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
         }
     }
 
 
     @GetMapping("/{account}/info")
-    public User getInfo(@PathVariable String account) {
-        return userService.getUser(account);
+    public Result<User> getInfo(@PathVariable String account) {
+        try {
+            return userService.getUser(account);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
+        }
     }
+
+
+    @GetMapping("query")
+    public Result<List<User>> queryUser(User queryForm, HttpServletRequest request) {
+        try {
+            return userService.doUserQuery(queryForm, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
+        }
+    }
+
 
     @ResponseBody
     @PostMapping("/info/update")
-    public String updateInfo(@RequestBody User user) {
-        //TODO: 信息校验, 校验修改的用户和上传的用户是否相同
-        if (userService.noUser(user.getAccount())) {
-            return "用户不存在";
-
-        } else if (userService.hasName(user.getName())) {
-            return "用户名已存在";
-
-        } else {
-            userService.updateInfo(user);
-            return "修改成功";
+    public Result<String> updateInfo(@RequestBody User user, HttpServletRequest request) {
+        try {
+            return userService.doInfoUpdate(user, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
         }
     }
 }

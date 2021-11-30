@@ -30,14 +30,14 @@ class RecyclePackServiceTest {
 
     @Test
     void getGames() {
-        for (RecyclePackGame game : recyclePackService.getGames("sheng", "回收")) {
+        for (RecyclePackGame game : recyclePackService.getGames("sheng", "回收", null).getData()) {
             System.out.println(game);
         }
     }
 
     @Test
     void deleteGames() {
-        recyclePackService.deleteGames("sheng", "回收", Collections.singletonList(1L));
+        recyclePackService.deleteGames("sheng", "回收", List.of(1L, 5L), null);
     }
 
     @Test
@@ -47,11 +47,17 @@ class RecyclePackServiceTest {
         num.put("num", 2);
         num.put("id", 1);
         numList.add(num);
-        recyclePackService.updateNum("sheng", "回收", numList);
+
+        Map<String, Object> num2 = new HashMap<>();
+        num2.put("num", 4);
+        num2.put("id", 5);
+        numList.add(num2);
+
+        recyclePackService.updateNum("sheng", "回收", numList, null);
     }
 
     @Test
     void addGame() {
-        recyclePackService.addGame("sheng", 1, "回收");
+        recyclePackService.addGame("sheng", 1, "回收", null);
     }
 }

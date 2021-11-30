@@ -12,4 +12,5 @@ public class User {
     private String name;
     private String avatar;
     private String gender;
+    private String regdate;
 }

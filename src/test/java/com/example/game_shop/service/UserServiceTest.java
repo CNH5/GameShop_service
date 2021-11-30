@@ -38,25 +38,20 @@ class UserServiceTest {
     }
 
     @Test
-    void addUser() {
-        String account = "sheng";
-        String password = "sheng@123";
-        userService.addUser(account, password);
+    void doLogin() {
+        System.out.println(userService.doLogin("sheng", "sheng@123", null));
     }
 
     @Test
-    void getPassword() {
-        System.out.println(userService.getPassword("sheng"));
+    void doRegister() {
+        System.out.println(userService.doRegister("sheng", "sheng@123"));
     }
 
     @Test
-    void updateInfo() {
-        String account = "sheng";
-        User user = userService.getUser(account);
-        user.setGender("男");
-        user.setName("Ilex-179");
-        userService.updateInfo(user);
-        System.out.println(userService.getUser(account));
+    void doInfoUpdate() {
+        User user = userService.getUser("sheng").getData();
+
+        System.out.println(userService.doInfoUpdate(user, null));
     }
 
     @Test
@@ -64,7 +59,7 @@ class UserServiceTest {
         User user = new User();
         user.setGender("男");
         System.out.println("result:");
-        for (User u : userService.queryUsers(user)){
+        for (User u : userService.doUserQuery(user, null).getData()) {
             System.out.println(u);
         }
     }

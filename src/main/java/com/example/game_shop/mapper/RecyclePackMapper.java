@@ -45,11 +45,9 @@ public interface RecyclePackMapper {
                 from recycle_pack
                 where account = #{account}
                   and type = #{type}
-                <trim prefix="and" suffixOverrides="or">
-                    <foreach collection="list" item="id" separator="or">
-                        gid = #{id}
-                    </foreach>
-                </trim>
+                  <foreach collection="list" item="id" separator="or" open="and">
+                      gid = #{id}
+                  </foreach>
             </script>
             """)
     int deleteGames(@Param("account") String account, @Param("type") String type, @Param("list") List<Long> idList);
@@ -58,11 +56,9 @@ public interface RecyclePackMapper {
             <script>
                 update recycle_pack
                 <trim prefix="set" suffixOverrides=",">
-                    <trim prefix="num=case" suffix="end,">
-                        <foreach collection="numList" item="game">
-                            when gid=#{game.id} then #{game.num}
-                        </foreach>
-                     </trim>
+                    <foreach collection="numList" item="game" open="num=case" close="end,">
+                        when gid=#{game.id} then #{game.num}
+                    </foreach>
                 </trim>
                 where account = #{account}
                   and type = #{type}

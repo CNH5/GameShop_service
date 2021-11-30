@@ -1,61 +1,78 @@
 package com.example.game_shop.controller;
 
+import com.example.game_shop.Result.Result;
 import com.example.game_shop.pojo.BasicOrder;
 import com.example.game_shop.pojo.Order;
+import com.example.game_shop.pojo.OrderForm;
 import com.example.game_shop.service.OrderService;
-import com.example.game_shop.service.UserService;
-import org.springframework.stereotype.Controller;
+import com.example.game_shop.utils.ResultUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
  * @author sheng
  * @date 2021/11/18 23:45
  */
-@Controller
+@RestController
 @CrossOrigin
 @RequestMapping("/user")
 public class OrderController {
     @Resource
     private OrderService orderService;
 
-    @Resource
-    private UserService userService;
 
     @GetMapping("/{account}/order/list")
-    public List<BasicOrder> getOrderList(@PathVariable("account") String account, @RequestParam("type") String type) {
-        return orderService.getOrderList(account, type);
-    }
-
-    @GetMapping("/{account}/order/info")
-    public Order getOrder(@PathVariable("account") String account, @RequestParam("id") long id) {
-        //加一个账号项，做验证
-        return orderService.getOrder(account, id);
-    }
-
-    @ResponseBody
-    @PostMapping("/{account}/order/add")
-    public String addOrder(@PathVariable("account") String account, @RequestBody Order order) {
-        if (userService.noUser(account)) {
-            return "用户不存在";
-
-        } else {
-            orderService.addOrder(account, order);
-            return "添加成功";
+    public Result<List<BasicOrder>> getOrderList(@PathVariable("account") String account,
+                                                 @RequestParam("shipped") String shipped,
+                                                 @RequestParam("type") String type,
+                                                 HttpServletRequest request) {
+        try {
+            return orderService.getOrderList(account, shipped, type, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求出错，请稍后重试");
         }
     }
 
-    @ResponseBody
-    @PostMapping("/{account}/order/receiver/update")
-    public String updateReceiverInfo(@PathVariable("account") String account, @RequestBody Order order) {
-        if (orderService.hasOrder(account, order.getId())) {
-            orderService.updateReceiverInfo(account, order);
-            return "修改成功";
+    @GetMapping("/{account}/order/info")
+    public Result<Order> getOrder(@PathVariable("account") String account,
+                                  @RequestParam("id") long id,
+                                  HttpServletRequest request) {
+        //加一个账号项，做验证
+        try {
+            return orderService.getOrder(account, id, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求出错，请稍后重试");
+        }
+    }
 
-        } else {
-            return "订单不存在";
+
+    @PostMapping("/{account}/order/add")
+    public Result<String> addOrder(@PathVariable("account") String account,
+                                   @RequestBody OrderForm form,
+                                   HttpServletRequest request) {
+        try {
+            return orderService.doOrderAdd(account, form, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求出错，请稍后重试");
+        }
+    }
+
+
+    @PostMapping("/{account}/order/receiver/update")
+    public Result<String> updateReceiverInfo(@PathVariable("account") String account,
+                                             @RequestBody OrderForm form,
+                                             HttpServletRequest request) {
+        try {
+            return orderService.doReceiverInfoUpdate(account, form, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求出错，请稍后重试");
         }
     }
 }

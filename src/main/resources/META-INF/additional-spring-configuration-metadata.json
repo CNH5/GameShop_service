@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "token.privateKey",
+      "type": "java.lang.String",
+      "description": "Description for token.privateKey."
+    }
+  ]
+}

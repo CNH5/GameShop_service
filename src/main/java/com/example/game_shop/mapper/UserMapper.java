@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author sheng
@@ -19,21 +20,27 @@ public interface UserMapper {
             user(account, password, name)
             value (#{account}, #{password}, #{name})
             """)
-    int insertUser(String account, String password, String name);
+    void insertUser(String account, String password, String name);
 
     @Select("""
-            select account, name, avatar, gender, regdate
+            select
+                account,
+                name,
+                avatar,
+                gender,
+                regdate,
+                DATE_FORMAT(regdate, '%Y-%m-%d %H:%i:%s') as regdate
             from user
             where account=#{account}
             """)
     User getUserByAccount(String account);
 
     @Select("""
-            select password
+            select *
             from user
             where account=#{account}
             """)
-    String getPassword(String account);
+    Map<String, String> getUserAll(String account);
 
     @Select("""
             select name
@@ -41,6 +48,13 @@ public interface UserMapper {
             where name=#{name}
             """)
     String getName(String name);
+
+    @Select("""
+            select id
+            from user
+            where account = #{account}
+            """)
+    String getId(String account);
 
     @Select("""
             select ident

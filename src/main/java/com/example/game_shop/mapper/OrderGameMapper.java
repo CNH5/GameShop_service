@@ -1,6 +1,6 @@
 package com.example.game_shop.mapper;
 
-import com.example.game_shop.pojo.Order;
+import com.example.game_shop.pojo.OrderForm;
 import com.example.game_shop.pojo.OrderGame;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -27,6 +27,7 @@ public interface OrderGameMapper {
             """)
     List<OrderGame> getOrderGame(long oid);
 
+
     @Insert("""
             <script>
                 insert into order_game(oid, gid, num)
@@ -35,5 +36,5 @@ public interface OrderGameMapper {
                 </foreach>
             </script>
             """)
-    int insertGame(Order order);
+    int insertGame(OrderForm form);
 }

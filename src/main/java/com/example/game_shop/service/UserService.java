@@ -1,12 +1,18 @@
 package com.example.game_shop.service;
 
+import com.example.game_shop.Result.Result;
 import com.example.game_shop.mapper.UserMapper;
 import com.example.game_shop.pojo.User;
+import com.example.game_shop.utils.ResultUtil;
+import com.example.game_shop.utils.TokenUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author sheng
@@ -15,7 +21,10 @@ import java.util.List;
 @Service
 public class UserService {
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
+
+    @Resource
+    private TokenUtil tokenUtil;
 
     /**
      * 检验用户是否存在
@@ -23,7 +32,7 @@ public class UserService {
      * @return 不存在返回true，否则返回false
      */
     public boolean noUser(String account) {
-        return userMapper.getUserByAccount(account) == null;
+        return userMapper.getUserByAccount(account) != null;
     }
 
     /**
@@ -36,44 +45,112 @@ public class UserService {
     }
 
     /**
-     * 获取账号对应的用户
+     * 获取账号对应的用户信息
      */
-    public User getUser(String account) {
-        return userMapper.getUserByAccount(account);
+    public Result<User> getUser(String account) {
+        return ResultUtil.success(userMapper.getUserByAccount(account));
+    }
+
+    public Result<String> doLogin(String account, String password, HttpServletResponse response) {
+        if (checkForm(account, password)) {
+            Map<String, String> user = userMapper.getUserAll(account);
+            if (user.get("password") == null) {
+                // 查询结果为空，用户不存在
+                return ResultUtil.fail("用户不存在");
+            } else if (user.get("password").equals(password)) {
+                // 密码正确,设置返回头包含token
+                tokenUtil.setToken(user.get("account"), user.get("id"), response);
+                return ResultUtil.success("登录成功", null);
+            } else {
+                // 密码不正确
+                return ResultUtil.fail("密码错误");
+            }
+        } else {
+            //表单验证不通过
+            return ResultUtil.fail("账号或密码不能为空");
+        }
     }
 
     /**
-     * 添加用户
+     * 执行注册功能
      */
-    @Transactional(rollbackFor = Exception.class)
-    public void addUser(String account, String password) {
-        int n = userMapper.insertUser(account, password, account);
-        System.out.println("add user:" + n);
+    public Result<String> doRegister(String account, String password) {
+        if (checkForm(account, password)) {
+            if (noUser(account)) {
+                userMapper.insertUser(account, password, account);
+                // 插入成功
+                return ResultUtil.success("注册成功", null);
+            } else {
+                // 账号已存在，不能继续注册
+                return ResultUtil.fail("账号已存在");
+            }
+        } else {
+            //表单验证不通过
+            return ResultUtil.fail("账号或密码不能为空");
+        }
     }
 
-
     /**
-     * 获取用户的密码
+     * 执行信息修改功能
      */
-    public String getPassword(String account) {
-        return userMapper.getPassword(account);
-    }
-
-    /**
-     * 修改用户的信息
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void updateInfo(User user) {
-        int n = userMapper.updateUser(user);
-        System.out.println("update user: " + n);
+    public Result<String> doInfoUpdate(User infoForm, HttpServletRequest request) {
+        // 校验输入
+        String msg = checkInfo(infoForm);
+        if (msg == null) {
+            // 输入无误，校验请求
+            if (tokenUtil.check(infoForm.getAccount(), request)) {
+                // 修改信息
+                int updated = userMapper.updateUser(infoForm);
+                System.out.println("update user num: " + updated);
+                return ResultUtil.success("修改成功", null);
+            } else {
+                return ResultUtil.fail("用户不一致");
+            }
+        } else {
+            // 输入有误
+            return ResultUtil.fail(msg);
+        }
     }
 
     /**
      * 查询用户
      *
-     * @param user 查询条件
+     * @param queryForm 查询条件
      */
-    public List<User> queryUsers(User user) {
-        return userMapper.queryUsers(user);
+    public Result<List<User>> doUserQuery(User queryForm, HttpServletRequest request) {
+        // 校验身份
+        if ("管理员".equals(tokenUtil.getIdent(request))) {
+            return ResultUtil.success(userMapper.queryUsers(queryForm));
+        } else {
+            return ResultUtil.fail("权限不足");
+        }
+    }
+
+    /**
+     * 校验登陆注册表
+     *
+     * @return 合规返回true，否则返回false
+     */
+    private boolean checkForm(String account, String password) {
+        return StringUtils.hasLength(account.trim()) && StringUtils.hasLength(password.trim());
+    }
+
+    /**
+     * 校验信息修改表
+     *
+     * @return 没有错误返回null，否则返回错误信息
+     */
+    private String checkInfo(User infoForm) {
+        if (!StringUtils.hasLength(infoForm.getName().trim())) {
+            return "昵称不能为空";
+        } else if (!StringUtils.hasLength(infoForm.getGender()) ||
+                !List.of("男", "女", "未知").contains(infoForm.getGender())) {
+            return "性别填写有误";
+        } else if (noUser(infoForm.getAccount())) {
+            return "用户不存在";
+        } else if (hasName(infoForm.getName())) {
+            return "用户名已存在";
+        }
+        return null;
     }
 }

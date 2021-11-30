@@ -12,9 +12,10 @@ import java.util.List;
  */
 @Mapper
 public interface GameMapper {
+    //这里还需要另作修改，封面图片对不上
     @Insert("""
             insert into game(name, platform, stock, price)
-            values (#{name}, #{platform}, #{stock}, #{price})
+            values (#{name}, #{platform}, #{stock}, #{cover_image})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insertGame(Game game);
@@ -48,21 +49,21 @@ public interface GameMapper {
                 select count(*)
                 from game
                 <foreach collection="idList" item="id" open="where" separator="or">
-                    id=#{id}
+                    id = #{id}
                 </foreach>
             </script>
             """)
-    int hasN(List<Integer> idList);
+    int hasN(List<Long> idList);
 
     @Update("""
             <script>
                 update game
                 <set>
-                    <if test="name != ''">name=#{name}</if>
-                    <if test="price > 0">price=#{price}</if>
-                    <if test="status != null">status=#{status}</if>
+                    <if test="name != ''">name=#{name},</if>
+                    <if test="price > 0">price=#{price},</if>
+                    <if test="status != null">status=#{status},</if>
                 </set>
-                where id=#{id}
+                where id = #{id}
             </script>
             """)
     int updateGameInfo(Game game);
@@ -72,7 +73,7 @@ public interface GameMapper {
                 select id, name, price, cover_image
                 from game
                 <where>
-                    <if test="name != ''">and name like concat('%', #{name}, '%')</if>
+                    <if test="name != null and name != ''">and name like concat('%', #{name}, '%')</if>
                     <if test="platform != null">and platform=#{platform}</if>
                     <if test="true">and status='正常'</if>
                 </where>

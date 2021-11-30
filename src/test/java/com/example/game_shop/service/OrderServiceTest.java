@@ -28,44 +28,15 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Test
-    void hasOrder() {
-        System.out.println(orderService.hasOrder("sheng",3));
-    }
-
-    @Test
     void getOrderList() {
-        for (BasicOrder order : orderService.getOrderList("sheng", "回收")) {
+        for (BasicOrder order : orderService.getOrderList("sheng", "true", "回收", null).getData()) {
             System.out.println(order);
         }
     }
 
     @Test
     void getOrder() {
-        System.out.println(orderService.getOrder("sheng",3));
+        System.out.println(orderService.getOrder("sheng", 3, null));
     }
 
-    @Test
-    void addOrder() {
-        Order order = new Order();
-        order.setName("海豚");
-        order.setLocation("火星");
-        order.setPhoneNumber("18877866248");
-        order.setType("购买");
-
-        List<OrderGame> games = new ArrayList<>();
-
-        OrderGame game1 = new OrderGame();
-        game1.setId(1);
-        game1.setNum(1);
-
-        OrderGame game2 = new OrderGame();
-        game2.setId(55);
-        game2.setNum(1);
-
-        games.add(game1);
-        games.add(game2);
-
-        order.setGames(games);
-        orderService.addOrder("sheng", order);
-    }
 }

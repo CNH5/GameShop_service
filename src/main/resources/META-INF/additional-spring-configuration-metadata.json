@@ -4,6 +4,16 @@
       "name": "token.privateKey",
       "type": "java.lang.String",
       "description": "Description for token.privateKey."
+    },
+    {
+      "name": "token.yangToken",
+      "type": "java.lang.String",
+      "description": "Description for token.yangToken."
+    },
+    {
+      "name": "token.oldToken",
+      "type": "java.lang.String",
+      "description": "Description for token.oldToken."
     }
   ]
 }

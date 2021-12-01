@@ -1,5 +1,9 @@
 package com.example.game_shop.utils;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.game_shop.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -7,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,7 +33,12 @@ public class TokenUtil {
      * @return token
      */
     public String getToken(String account, String id) {
-        return null;
+        return JWT
+                .create()
+                .withClaim("account", account)
+                .withClaim("id", id)
+                .withClaim("timeStamp", System.currentTimeMillis())
+                .sign(Algorithm.HMAC256(privateKey));
     }
 
     /**
@@ -43,7 +53,16 @@ public class TokenUtil {
      * 将token转化为原来的内容
      */
     public Map<String, String> parseToken(String token) {
-        return null;
+        HashMap<String, String> map = new HashMap<>();
+        DecodedJWT decodedjwt = JWT.require(Algorithm.HMAC256(privateKey)).build().verify(token);
+        Claim account = decodedjwt.getClaim("account");
+        Claim id = decodedjwt.getClaim("id");
+        Claim timeStamp = decodedjwt.getClaim("timeStamp");
+
+        map.put("account", account.asString());
+        map.put("id", id.asString());
+        map.put("timeStamp", timeStamp.asLong().toString());
+        return map;
     }
 
     /**

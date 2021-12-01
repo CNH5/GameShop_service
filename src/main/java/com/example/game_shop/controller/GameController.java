@@ -34,6 +34,7 @@ public class GameController {
         }
     }
 
+
     @GetMapping("{id}/info")
     public Result<Game> getGame(@PathVariable long id) {
         //查询结果为空，就是找不到嘛..还需要做什么处理吗..

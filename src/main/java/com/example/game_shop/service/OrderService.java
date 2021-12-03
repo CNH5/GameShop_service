@@ -8,13 +8,11 @@ import com.example.game_shop.pojo.BasicOrder;
 import com.example.game_shop.pojo.Order;
 import com.example.game_shop.pojo.OrderForm;
 import com.example.game_shop.utils.ResultUtil;
-import com.example.game_shop.utils.TokenUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,70 +31,50 @@ public class OrderService {
     private GameMapper gameMapper;
 
     @Resource
-    private TokenUtil tokenUtil;
-
-    @Resource
     private OrderGameMapper orderGameMapper;
 
     private static final Pattern phoneNumber = Pattern.compile("^(13[0-9]|14[01456879]|15[0-3,5-9]|16[2567]|17[0-8]|18[0-9]|19[0-3,5-9])d{8}$");
 
-    public Result<List<BasicOrder>> getOrderList(String account, String shipped, String type, HttpServletRequest request) {
-        if (tokenUtil.check(account, request)) {
-            return ResultUtil.success(orderMapper.getOrderList(account, shipped, type));
-        } else {
-            return ResultUtil.fail("用户不一致");
-        }
+    public Result<List<BasicOrder>> getOrderList(String account, String shipped, String type) {
+        return ResultUtil.success(orderMapper.getOrderList(account, shipped, type));
     }
 
-    public Result<Order> getOrder(String account, long id, HttpServletRequest request) {
-        if (tokenUtil.check(account, request)) {
-            return ResultUtil.success(orderMapper.getOrder(account, id));
+    public Result<Order> getOrder(String account, long id) {
+        return ResultUtil.success(orderMapper.getOrder(account, id));
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    public Result<String> doOrderAdd(String account, OrderForm form) {
+        // 订单校验
+        String msg = checkOrderForm(form);
+        if (msg == null) {
+            // 无错误信息
+            // 插入订单
+            int orderInserted = orderMapper.insert(account, form);
+            // 插入订单-商品
+            int gameInserted = orderGameMapper.insertGame(form);
+
+            System.out.println("insert order: " + orderInserted);
+            System.out.println("insert game: " + gameInserted);
+            // 还需要做校验吗?
+            return ResultUtil.success("添加成功", null);
         } else {
-            return ResultUtil.fail("用户不一致");
+            // 有错误信息
+            return ResultUtil.fail(msg);
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> doOrderAdd(String account, OrderForm form, HttpServletRequest request) {
-        if (tokenUtil.check(account, request)) {
-            // 订单校验
-            String msg = checkOrderForm(form);
-            if (msg == null) {
-                // 无错误信息
-                // 插入订单
-                int orderInserted = orderMapper.insert(account, form);
-                // 插入订单-商品
-                int gameInserted = orderGameMapper.insertGame(form);
+    public Result<String> doReceiverInfoUpdate(String account, OrderForm form) throws Exception {
+        int updated = orderMapper.updateReceiverInfo(account, form);
+        System.out.println("update receiver num: " + updated);
 
-                System.out.println("insert order: " + orderInserted);
-                System.out.println("insert game: " + gameInserted);
-                // 还需要做校验吗?
-                return ResultUtil.success("添加成功", null);
-            } else {
-                // 有错误信息
-                return ResultUtil.fail(msg);
-            }
+        if (updated == 0) {
+            return ResultUtil.fail("订单不存在");
+        } else if (updated == 1) {
+            return ResultUtil.success("修改成功", null);
         } else {
-            return ResultUtil.fail("用户不一致");
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Result<String> doReceiverInfoUpdate(String account, OrderForm form, HttpServletRequest request) throws Exception {
-        if (tokenUtil.check(account, request)) {
-            int updated = orderMapper.updateReceiverInfo(account, form);
-            System.out.println("update receiver num: " + updated);
-
-            if (updated == 0) {
-                return ResultUtil.fail("订单不存在");
-            } else if (updated == 1) {
-                return ResultUtil.success("修改成功", null);
-            } else {
-                throw new Exception("修改数量为" + updated);
-            }
-        } else {
-            return ResultUtil.fail("用户不一致");
+            throw new Exception("修改数量为" + updated);
         }
     }
 

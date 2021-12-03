@@ -9,7 +9,6 @@ import com.example.game_shop.utils.ResultUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -27,10 +26,9 @@ public class OrderController {
     @GetMapping("/{account}/order/list")
     public Result<List<BasicOrder>> getOrderList(@PathVariable("account") String account,
                                                  @RequestParam("shipped") String shipped,
-                                                 @RequestParam("type") String type,
-                                                 HttpServletRequest request) {
+                                                 @RequestParam("type") String type) {
         try {
-            return orderService.getOrderList(account, shipped, type, request);
+            return orderService.getOrderList(account, shipped, type);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求出错，请稍后重试");
@@ -39,11 +37,10 @@ public class OrderController {
 
     @GetMapping("/{account}/order/info")
     public Result<Order> getOrder(@PathVariable("account") String account,
-                                  @RequestParam("id") long id,
-                                  HttpServletRequest request) {
+                                  @RequestParam("id") long id) {
         //加一个账号项，做验证
         try {
-            return orderService.getOrder(account, id, request);
+            return orderService.getOrder(account, id);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求出错，请稍后重试");
@@ -53,10 +50,9 @@ public class OrderController {
 
     @PostMapping("/{account}/order/add")
     public Result<String> addOrder(@PathVariable("account") String account,
-                                   @RequestBody OrderForm form,
-                                   HttpServletRequest request) {
+                                   @RequestBody OrderForm form) {
         try {
-            return orderService.doOrderAdd(account, form, request);
+            return orderService.doOrderAdd(account, form);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求出错，请稍后重试");
@@ -66,10 +62,9 @@ public class OrderController {
 
     @PostMapping("/{account}/order/receiver/update")
     public Result<String> updateReceiverInfo(@PathVariable("account") String account,
-                                             @RequestBody OrderForm form,
-                                             HttpServletRequest request) {
+                                             @RequestBody OrderForm form) {
         try {
-            return orderService.doReceiverInfoUpdate(account, form, request);
+            return orderService.doReceiverInfoUpdate(account, form);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求出错，请稍后重试");

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
@@ -93,19 +92,14 @@ public class UserService {
     /**
      * 执行信息修改功能
      */
-    public Result<String> doInfoUpdate(User infoForm, HttpServletRequest request) {
+    public Result<String> doInfoUpdate(User infoForm) {
         // 校验输入
         String msg = checkInfo(infoForm);
         if (msg == null) {
-            // 输入无误，校验请求
-            if (tokenUtil.check(infoForm.getAccount(), request)) {
-                // 修改信息
-                int updated = userMapper.updateUser(infoForm);
-                System.out.println("update user num: " + updated);
-                return ResultUtil.success("修改成功", null);
-            } else {
-                return ResultUtil.fail("用户不一致");
-            }
+            // 输入无误修改信息
+            int updated = userMapper.updateUser(infoForm);
+            System.out.println("update user num: " + updated);
+            return ResultUtil.success("修改成功", null);
         } else {
             // 输入有误
             return ResultUtil.fail(msg);
@@ -117,13 +111,8 @@ public class UserService {
      *
      * @param queryForm 查询条件
      */
-    public Result<List<User>> doUserQuery(User queryForm, HttpServletRequest request) {
-        // 校验身份
-        if ("管理员".equals(tokenUtil.getIdent(request))) {
-            return ResultUtil.success(userMapper.queryUsers(queryForm));
-        } else {
-            return ResultUtil.fail("权限不足");
-        }
+    public Result<List<User>> doUserQuery(User queryForm) {
+        return ResultUtil.success(userMapper.queryUsers(queryForm));
     }
 
     /**

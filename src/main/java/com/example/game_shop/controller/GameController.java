@@ -1,6 +1,7 @@
 package com.example.game_shop.controller;
 
 import com.example.game_shop.Result.Result;
+import com.example.game_shop.annotation.DoWithoutToken;
 import com.example.game_shop.pojo.BasicGameInfo;
 import com.example.game_shop.pojo.Game;
 import com.example.game_shop.service.GameService;
@@ -23,6 +24,7 @@ public class GameController {
 
 
     @GetMapping("/info/list")
+    @DoWithoutToken
     public Result<List<BasicGameInfo>> queryGame(@RequestParam(value = "name", defaultValue = "") String name,
                                                  @RequestParam("platform") String platform,
                                                  @RequestParam(value = "page", defaultValue = "1") int page) {
@@ -36,6 +38,7 @@ public class GameController {
 
 
     @GetMapping("{id}/info")
+    @DoWithoutToken
     public Result<Game> getGame(@PathVariable long id) {
         //查询结果为空，就是找不到嘛..还需要做什么处理吗..
         try {

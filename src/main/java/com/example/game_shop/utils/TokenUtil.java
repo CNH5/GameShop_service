@@ -4,12 +4,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.game_shop.mapper.UserMapper;
+import com.example.game_shop.exception.TokenAuthExpiredException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +18,11 @@ import java.util.Map;
  */
 @Component
 public class TokenUtil {
-    @Resource
-    private UserMapper userMapper;
+    @Value("${token.yangToken}")
+    private Long yangToken;
+
+    @Value("${token.oldToken}")
+    private Long oldToken;
 
     @Value("${token.privateKey}")
     private String privateKey;
@@ -66,37 +67,20 @@ public class TokenUtil {
     }
 
     /**
-     * 检验token是否有效
+     * 根据使用时间，判断是否需要刷新token
      *
-     * @return 有效返回true，否则返回false
+     * @param account   账号
+     * @param id        用户id
+     * @param timeOfUse 使用时间
+     * @param response  回复头
      */
-    public boolean checkToken(String token) {
-        Map<String, String> origin = parseToken(token);
-        return origin.get("id") != null &&
-                origin.get("account") != null &&
-                origin.get("id").equals(userMapper.getId(origin.get("account")));
-    }
-
-    /**
-     * 检验账号和请求头中携带的账号是否一致
-     *
-     * @return 一致返回true，否则返回false
-     */
-    public boolean check(String account, HttpServletRequest request) {
-        return getAccount(request).equals(account);
-    }
-
-    /**
-     * 从请求头中获取token的账号项
-     */
-    public String getAccount(HttpServletRequest request) {
-        return parseToken(request.getHeader("token")).get("account");
-    }
-
-    /**
-     * 从请求头中获取token的id项
-     */
-    public String getIdent(HttpServletRequest request) {
-        return userMapper.getIdent(getAccount(request));
+    public void updateToken(String account, String id, long timeOfUse, HttpServletResponse response) throws TokenAuthExpiredException {
+        if (timeOfUse >= yangToken && timeOfUse < oldToken) {
+            // 老年token,刷新token
+            setToken(account, id, response);
+        } else if (timeOfUse >= oldToken) {
+            // 过期token,返回token无效.
+            throw new TokenAuthExpiredException();
+        }
     }
 }

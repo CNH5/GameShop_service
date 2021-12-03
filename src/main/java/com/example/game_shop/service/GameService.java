@@ -3,16 +3,13 @@ package com.example.game_shop.service;
 import com.example.game_shop.Result.Result;
 import com.example.game_shop.mapper.GameMapper;
 import com.example.game_shop.mapper.GamePictureMapper;
-import com.example.game_shop.mapper.UserMapper;
 import com.example.game_shop.pojo.BasicGameInfo;
 import com.example.game_shop.pojo.Game;
 import com.example.game_shop.utils.ResultUtil;
-import com.example.game_shop.utils.TokenUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,19 +22,7 @@ public class GameService {
     private GameMapper gameMapper;
 
     @Resource
-    private TokenUtil tokenUtil;
-
-    @Resource
     private GamePictureMapper pictureMapper;
-
-    /**
-     * 游戏是否存在
-     *
-     * @return 存在返回true，否则返回false
-     */
-    public boolean hasGame(long id) {
-        return gameMapper.getGameById(id) != null;
-    }
 
     /**
      * 获取游戏的详细信息
@@ -61,19 +46,15 @@ public class GameService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> updateGameInfo(Game game, HttpServletRequest request) {
-        if ("管理员".equals(tokenUtil.getIdent(request))) {
-            int updated = gameMapper.updateGameInfo(game);
-            int deleted = pictureMapper.deletePicture(game.getId());
-            int inserted = pictureMapper.addPicture(game.getId(), game.getImages());
+    public Result<String> updateGameInfo(Game game) {
+        int updated = gameMapper.updateGameInfo(game);
+        int deleted = pictureMapper.deletePicture(game.getId());
+        int inserted = pictureMapper.addPicture(game.getId(), game.getImages());
 
-            System.out.println("update game: " + updated);
-            System.out.println("delete picture: " + deleted);
-            System.out.println("insert picture: " + inserted);
+        System.out.println("update game: " + updated);
+        System.out.println("delete picture: " + deleted);
+        System.out.println("insert picture: " + inserted);
 
-            return ResultUtil.success("修改成功", null);
-        } else {
-            return ResultUtil.fail("权限不足");
-        }
+        return ResultUtil.success("修改成功", null);
     }
 }

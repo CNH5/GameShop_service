@@ -1,13 +1,14 @@
 package com.example.game_shop.controller;
 
 import com.example.game_shop.Result.Result;
+import com.example.game_shop.annotation.DoWithoutToken;
+import com.example.game_shop.annotation.RequiredPermission;
 import com.example.game_shop.pojo.User;
 import com.example.game_shop.service.UserService;
 import com.example.game_shop.utils.ResultUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class UserController {
     private UserService userService;
 
 
+    @DoWithoutToken
     @PostMapping("/login")
     public Result<String> login(@RequestParam("account") String account,
                                 @RequestParam("password") String password,
@@ -36,7 +38,7 @@ public class UserController {
         }
     }
 
-
+    @DoWithoutToken
     @PostMapping("/register")
     public Result<String> register(@RequestParam("account") String account,
                                    @RequestParam("password") String password) {
@@ -62,9 +64,10 @@ public class UserController {
 
 
     @GetMapping("query")
-    public Result<List<User>> queryUser(User queryForm, HttpServletRequest request) {
+    @RequiredPermission
+    public Result<List<User>> queryUser(User queryForm) {
         try {
-            return userService.doUserQuery(queryForm, request);
+            return userService.doUserQuery(queryForm);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");
@@ -74,9 +77,9 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/info/update")
-    public Result<String> updateInfo(@RequestBody User user, HttpServletRequest request) {
+    public Result<String> updateInfo(@RequestBody User user) {
         try {
-            return userService.doInfoUpdate(user, request);
+            return userService.doInfoUpdate(user);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");

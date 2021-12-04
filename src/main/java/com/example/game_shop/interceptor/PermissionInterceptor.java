@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 public class PermissionInterceptor implements HandlerInterceptor {
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         return HandlerInterceptor.super.preHandle(request, response, handler);

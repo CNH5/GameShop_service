@@ -92,14 +92,14 @@ public class UserService {
     /**
      * 执行信息修改功能
      */
-    public Result<String> doInfoUpdate(User infoForm) {
+    public Result<Integer> doInfoUpdate(User infoForm) {
         // 校验输入
         String msg = checkInfo(infoForm);
         if (msg == null) {
             // 输入无误修改信息
             int updated = userMapper.updateUser(infoForm);
-            System.out.println("update user num: " + updated);
-            return ResultUtil.success("修改成功", null);
+            assert updated == 1;
+            return ResultUtil.success("修改成功", updated);
         } else {
             // 输入有误
             return ResultUtil.fail(msg);

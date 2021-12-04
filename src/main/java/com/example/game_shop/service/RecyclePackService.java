@@ -30,24 +30,22 @@ public class RecyclePackService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> deleteGames(String account, String type, List<Long> idList) {
+    public Result<Integer> deleteGames(String account, String type, List<Long> idList) {
         int deleted = packMapper.deleteGames(account, type, idList);
-        System.out.println("delete num:" + deleted);
-        return ResultUtil.success("删除成功", null);
+        return ResultUtil.success("删除成功", deleted);
     }
 
 
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> updateNum(String account, String type, List<Map<String, Object>> numList) {
-        int updated = packMapper.updateNum(account, type, numList);
-        System.out.println("update recycle_pack_game: " + updated);
-        return ResultUtil.success("删除成功", null);
+    public Result<Integer> updateNum(String account, String type, List<Map<String, Object>> numList) {
+        int deleted = packMapper.updateNum(account, type, numList);
+        return ResultUtil.success("删除成功", deleted);
     }
 
+
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> addGame(String account, long gid, String type) {
+    public Result<Integer> addGame(String account, long gid, String type) {
         int added = packMapper.addGame(account, gid, gameMapper.getPrice(gid), type);
-        System.out.println("add num:" + added);
-        return ResultUtil.success("删除成功", String.valueOf(added));
+        return ResultUtil.success("删除成功", added);
     }
 }

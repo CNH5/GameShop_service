@@ -35,7 +35,7 @@ public class RecyclePackController {
 
 
     @PostMapping("/{account}/{type}/delete")
-    public Result<String> deleteGame(@PathVariable("account") String account,
+    public Result<Integer> deleteGame(@PathVariable("account") String account,
                                      @PathVariable("type") String type,
                                      @RequestBody List<Long> idList) {
         try {
@@ -48,7 +48,7 @@ public class RecyclePackController {
 
 
     @PostMapping("/{account}/{type}/update")
-    public Result<String> updateNum(@PathVariable("account") String account,
+    public Result<Integer> updateNum(@PathVariable("account") String account,
                                     @PathVariable("type") String type,
                                     @RequestBody List<Map<String, Object>> numList) {
         try {
@@ -61,7 +61,7 @@ public class RecyclePackController {
 
 
     @PostMapping("/{account}/add")
-    public Result<String> addGame(@PathVariable("account") String account,
+    public Result<Integer> addGame(@PathVariable("account") String account,
                                   @RequestParam("id") long id,
                                   @RequestParam("type") String type) {
         try {

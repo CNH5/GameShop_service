@@ -77,7 +77,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/info/update")
-    public Result<String> updateInfo(@RequestBody User user) {
+    public Result<Integer> updateInfo(@RequestBody User user) {
         try {
             return userService.doInfoUpdate(user);
         } catch (Exception e) {

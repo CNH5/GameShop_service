@@ -8,6 +8,7 @@ import com.example.game_shop.pojo.Game;
 import com.example.game_shop.utils.ResultUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,7 +29,8 @@ public class GameService {
      * 获取游戏的详细信息
      */
     public Result<Game> getGameById(long id) {
-        return ResultUtil.success(gameMapper.getGameById(id));
+        Game game = gameMapper.getGameById(id);
+        return game != null ? ResultUtil.success(game) : ResultUtil.fail("游戏不存在");
     }
 
     /**
@@ -39,14 +41,19 @@ public class GameService {
      * @param page     页号
      */
     public Result<List<BasicGameInfo>> queryGame(String name, String platform, int page) {
-        List<BasicGameInfo> gameList = gameMapper.queryGame(name, platform);
-        // 步长20
-        int step = 20;
-        return ResultUtil.success(gameList.subList((page - 1) * step, (page * step)));
+        if (StringUtils.hasLength(platform) && List.of("NS", "PS").contains(platform)) {
+            List<BasicGameInfo> gameList = gameMapper.queryGame(name, platform);
+            // 步长20
+            int step = 20;
+            // 还要防止下标越界...
+            return ResultUtil.success(gameList.subList((page - 1) * step, (page * step)));
+        } else {
+            return ResultUtil.fail("游戏所在平台不正确");
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> updateGameInfo(Game game) {
+    public Result<Integer> updateGameInfo(Game game) {
         int updated = gameMapper.updateGameInfo(game);
         int deleted = pictureMapper.deletePicture(game.getId());
         int inserted = pictureMapper.addPicture(game.getId(), game.getImages());

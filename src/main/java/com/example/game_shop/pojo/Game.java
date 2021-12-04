@@ -34,5 +34,5 @@ public class Game {
 
     private List<String> images;
 
-    private List<Map<String, String>> history_price;
+    private List<Map<String, Object>> history_price;
 }

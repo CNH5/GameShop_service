@@ -24,7 +24,6 @@ import java.util.Map;
  */
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
-
     @Resource
     private TokenUtil tokenUtil;
 
@@ -55,8 +54,8 @@ public class TokenInterceptor implements HandlerInterceptor {
                 throw new AuthInconsistencyException();
             }
             // 判断 token 是否需要更新
-            long timeOfUse = System.currentTimeMillis() - Long.parseLong(origin.get("timeStamp"));
-            tokenUtil.updateToken(origin.get("account"), origin.get("id"), timeOfUse, response);
+            tokenUtil.updateToken(origin.get("account"), origin.get("id"),
+                    Long.parseLong(origin.get("timeStamp")), response);
             return true;
         }
         return false;
@@ -75,6 +74,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             if (withoutToken == null) {
                 withoutToken = handlerMethod.getMethod().getDeclaringClass().getAnnotation(DoWithoutToken.class);
             }
+            // 如果有注解，就不需要token
             return withoutToken != null;
         }
         return false;

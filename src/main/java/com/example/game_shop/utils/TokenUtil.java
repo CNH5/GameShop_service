@@ -2,7 +2,6 @@ package com.example.game_shop.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.game_shop.exception.TokenAuthExpiredException;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,13 +55,10 @@ public class TokenUtil {
     public Map<String, String> parseToken(String token) {
         HashMap<String, String> map = new HashMap<>();
         DecodedJWT decodedjwt = JWT.require(Algorithm.HMAC256(privateKey)).build().verify(token);
-        Claim account = decodedjwt.getClaim("account");
-        Claim id = decodedjwt.getClaim("id");
-        Claim timeStamp = decodedjwt.getClaim("timeStamp");
 
-        map.put("account", account.asString());
-        map.put("id", id.asString());
-        map.put("timeStamp", timeStamp.asLong().toString());
+        map.put("account", decodedjwt.getClaim("account").asString());
+        map.put("id", decodedjwt.getClaim("id").asString());
+        map.put("timeStamp", decodedjwt.getClaim("timeStamp").asLong().toString());
         return map;
     }
 
@@ -71,10 +67,11 @@ public class TokenUtil {
      *
      * @param account   账号
      * @param id        用户id
-     * @param timeOfUse 使用时间
+     * @param timestamp token的设置时间
      * @param response  回复头
      */
-    public void updateToken(String account, String id, long timeOfUse, HttpServletResponse response) throws TokenAuthExpiredException {
+    public void updateToken(String account, String id, long timestamp, HttpServletResponse response) throws TokenAuthExpiredException {
+        long timeOfUse = System.currentTimeMillis() - timestamp;
         if (timeOfUse >= yangToken && timeOfUse < oldToken) {
             // 老年token,刷新token
             setToken(account, id, response);

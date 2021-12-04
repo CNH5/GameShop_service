@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Mapper
 public interface GameMapper {
-    //这里还需要另作修改，封面图片对不上
+    // 这里还需要另作修改，封面图片对不上
     @Insert("""
             insert into game(name, platform, stock, price)
             values (#{name}, #{platform}, #{stock}, #{cover_image})
@@ -43,17 +43,6 @@ public interface GameMapper {
             where id = #{id}
             """)
     Game getGameById(long id);
-
-    @Select("""
-            <script>
-                select count(*)
-                from game
-                <foreach collection="idList" item="id" open="where" separator="or">
-                    id = #{id}
-                </foreach>
-            </script>
-            """)
-    int hasN(List<Long> idList);
 
     @Update("""
             <script>

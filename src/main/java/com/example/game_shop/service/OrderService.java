@@ -1,7 +1,6 @@
 package com.example.game_shop.service;
 
 import com.example.game_shop.Result.Result;
-import com.example.game_shop.mapper.GameMapper;
 import com.example.game_shop.mapper.OrderGameMapper;
 import com.example.game_shop.mapper.OrderMapper;
 import com.example.game_shop.pojo.BasicOrder;
@@ -13,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -26,9 +23,6 @@ import java.util.regex.Pattern;
 public class OrderService {
     @Resource
     private OrderMapper orderMapper;
-
-    @Resource
-    private GameMapper gameMapper;
 
     @Resource
     private OrderGameMapper orderGameMapper;
@@ -50,13 +44,10 @@ public class OrderService {
         if (msg == null) {
             // 无错误信息
             // 插入订单
-            int orderInserted = orderMapper.insert(account, form);
+            assert orderMapper.insert(account, form) == 1;
             // 插入订单-商品
-            int gameInserted = orderGameMapper.insertGame(form);
+            assert orderGameMapper.insertGame(form) == form.getGames().size();
 
-            System.out.println("insert order: " + orderInserted);
-            System.out.println("insert game: " + gameInserted);
-            // 还需要做校验吗?
             return ResultUtil.success("添加成功", null);
         } else {
             // 有错误信息
@@ -95,15 +86,6 @@ public class OrderService {
                 !List.of("回收", "购买").contains(form.getType())) {
             return "订单类型不正确";
 
-        } else {
-            // 校验订单的游戏id是否全部存在
-            List<Long> idList = new ArrayList<>();
-            for (Map<String, Object> game : form.getGames()) {
-                idList.add((Long) game.get("id"));
-            }
-            if (gameMapper.hasN(idList) != idList.size()) {
-                return "订单中有游戏不存在";
-            }
         }
         return null;
     }

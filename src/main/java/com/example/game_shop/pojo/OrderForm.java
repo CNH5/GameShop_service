@@ -12,6 +12,7 @@ import java.util.Map;
 @Data
 public class OrderForm {
     private long id;
+    private String account;
     private String name;
     private String type;
     private String location;

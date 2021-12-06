@@ -23,8 +23,8 @@ public class GameController {
     private GameService gameService;
 
 
-    @GetMapping("/info/list")
     @DoWithoutToken
+    @GetMapping("/info/list")
     public Result<List<BasicGameInfo>> queryGame(@RequestParam(value = "name", defaultValue = "") String name,
                                                  @RequestParam("platform") String platform,
                                                  @RequestParam(value = "page", defaultValue = "1") int page) {
@@ -37,8 +37,8 @@ public class GameController {
     }
 
 
-    @GetMapping("/info/{id}")
     @DoWithoutToken
+    @GetMapping("/info/{id}")
     public Result<Game> getGame(@PathVariable("id") long id) {
         try {
             return gameService.getGameById(id);

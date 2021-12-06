@@ -63,8 +63,8 @@ public class UserController {
     }
 
 
-    @GetMapping("query")
     @RequiredPermission
+    @GetMapping("query")
     public Result<List<User>> queryUser(User queryForm) {
         try {
             return userService.doUserQuery(queryForm);

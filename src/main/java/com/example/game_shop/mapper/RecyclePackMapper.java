@@ -66,6 +66,30 @@ public interface RecyclePackMapper {
             """)
     int updateNum(@Param("account") String account, @Param("type") String type, @Param("numList") List<Map<String, Object>> numList);
 
+    @Update("""
+            update recycle_pack
+            set change=#{change}
+            where account = #{account}
+              and type = #{type}
+            """)
+    int selectedAll(@Param("account") String account, @Param("type") String type, @Param("change") boolean selected);
+
+    @Update("""
+            <script>
+                update recycle_pack
+                set change= not change
+                <where>
+                    <foreach collection="idList" item="id">
+                        or id = #{id}
+                    </foreach>
+                    and account = #{account}
+                    and type = #{type}
+                </where>
+            </script>
+            """)
+    int change(@Param("account") String account, @Param("type") String type, @Param("idList") List<Long> idList);
+
+
     @Insert("""
             insert into recycle_pack(account, gid, price, type)
             values (#{account}, #{gid}, #{price}, #{type})

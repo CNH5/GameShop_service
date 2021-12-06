@@ -34,17 +34,18 @@ public class OrderService {
     }
 
     public Result<Order> getOrder(String account, long id) {
-        return ResultUtil.success(orderMapper.getOrder(account, id));
+        Order order = orderMapper.getOrder(account, id);
+        return order != null ? ResultUtil.success(order) : ResultUtil.fail("订单不存在");
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> doOrderAdd(String account, OrderForm form) {
+    public Result<String> doOrderAdd(OrderForm form) {
         // 订单校验
         String msg = checkOrderForm(form);
         if (msg == null) {
             // 无错误信息
             // 插入订单
-            assert orderMapper.insert(account, form) == 1;
+            assert orderMapper.insert(form) == 1;
             // 插入订单-商品
             assert orderGameMapper.insertGame(form) == form.getGames().size();
 
@@ -56,14 +57,14 @@ public class OrderService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Result<String> doReceiverInfoUpdate(String account, OrderForm form) throws Exception {
-        int updated = orderMapper.updateReceiverInfo(account, form);
+    public Result<Integer> doReceiverInfoUpdate(OrderForm form) throws Exception {
+        int updated = orderMapper.updateReceiverInfo(form);
         System.out.println("update receiver num: " + updated);
 
         if (updated == 0) {
             return ResultUtil.fail("订单不存在");
         } else if (updated == 1) {
-            return ResultUtil.success("修改成功", null);
+            return ResultUtil.success("修改成功", 1);
         } else {
             throw new Exception("修改数量为" + updated);
         }

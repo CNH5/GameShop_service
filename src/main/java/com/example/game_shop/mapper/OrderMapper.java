@@ -59,18 +59,18 @@ public interface OrderMapper {
     @Insert("""
             insert into
             orders(account, name, type, location, phoneNumber)
-            values(#{account}, #{order.name}, #{order.type}, #{order.location}, #{order.phoneNumber})
+            values(#{form.account}, #{form.name}, #{form.type}, #{form.location}, #{form.phoneNumber})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "order.id")
-    int insert(@Param("account") String account, @Param("order") OrderForm form);
+    int insert(OrderForm form);
 
 
     @Update("""
             update orders
-            set name=#{order.name},
-                location=#{order.location},
-                phoneNumber=#{order.phoneNumber}
-            where account=#{account} and id=#{order.id}
+            set name=#{form.name},
+                location=#{form.location},
+                phoneNumber=#{form.phoneNumber}
+            where account=#{form.account} and id=#{form.id}
             """)
-    int updateReceiverInfo(@Param("account") String account, @Param("order") OrderForm order);
+    int updateReceiverInfo(OrderForm form);
 }

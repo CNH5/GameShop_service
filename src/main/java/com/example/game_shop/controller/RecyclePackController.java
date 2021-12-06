@@ -22,8 +22,8 @@ public class RecyclePackController {
     private RecyclePackService recyclePackService;
 
 
-    @GetMapping("/{account}")
-    public Result<List<RecyclePackGame>> getGames(@PathVariable String account,
+    @GetMapping("/list")
+    public Result<List<RecyclePackGame>> getGames(@RequestParam("account") String account,
                                                   @RequestParam("type") String type) {
         try {
             return recyclePackService.getGames(account, type);
@@ -34,10 +34,10 @@ public class RecyclePackController {
     }
 
 
-    @PostMapping("/{account}/{type}/delete")
-    public Result<Integer> deleteGame(@PathVariable("account") String account,
-                                     @PathVariable("type") String type,
-                                     @RequestBody List<Long> idList) {
+    @PostMapping("/delete")
+    public Result<Integer> deleteGame(@RequestParam("account") String account,
+                                      @RequestParam("type") String type,
+                                      @RequestParam("idList") List<Long> idList) {
         try {
             return recyclePackService.deleteGames(account, type, idList);
         } catch (Exception e) {
@@ -46,11 +46,35 @@ public class RecyclePackController {
         }
     }
 
+    @PostMapping("/select/all")
+    public Result<Integer> selectAll(@RequestParam("account") String account,
+                                     @RequestParam("type") String type,
+                                     @RequestParam("selected") boolean selected) {
+        try {
+            return recyclePackService.selectedAll(account, type, selected);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
+        }
+    }
 
-    @PostMapping("/{account}/{type}/update")
-    public Result<Integer> updateNum(@PathVariable("account") String account,
-                                    @PathVariable("type") String type,
-                                    @RequestBody List<Map<String, Object>> numList) {
+    @PostMapping("/select")
+    public Result<Integer> change(@RequestParam("account") String account,
+                                  @RequestParam("type") String type,
+                                  @RequestParam("idList") List<Long> idList) {
+        try {
+            return recyclePackService.change(account, type, idList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
+        }
+    }
+
+
+    @PostMapping("/update")
+    public Result<Integer> updateNum(@RequestParam("account") String account,
+                                     @RequestParam("type") String type,
+                                     @RequestParam("numList") List<Map<String, Object>> numList) {
         try {
             return recyclePackService.updateNum(account, type, numList);
         } catch (Exception e) {
@@ -60,10 +84,10 @@ public class RecyclePackController {
     }
 
 
-    @PostMapping("/{account}/add")
-    public Result<Integer> addGame(@PathVariable("account") String account,
-                                  @RequestParam("id") long id,
-                                  @RequestParam("type") String type) {
+    @PostMapping("/add")
+    public Result<Integer> addGame(@RequestParam("account") String account,
+                                   @RequestParam("id") long id,
+                                   @RequestParam("type") String type) {
         try {
             return recyclePackService.addGame(account, id, type);
         } catch (Exception e) {

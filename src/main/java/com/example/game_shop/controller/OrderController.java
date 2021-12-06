@@ -17,14 +17,14 @@ import java.util.List;
  */
 @RestController
 @CrossOrigin
-@RequestMapping("/user")
+@RequestMapping("/user/order")
 public class OrderController {
     @Resource
     private OrderService orderService;
 
 
-    @GetMapping("/{account}/order/list")
-    public Result<List<BasicOrder>> getOrderList(@PathVariable("account") String account,
+    @GetMapping("/list")
+    public Result<List<BasicOrder>> getOrderList(@RequestParam("account") String account,
                                                  @RequestParam("shipped") String shipped,
                                                  @RequestParam("type") String type) {
         try {
@@ -35,8 +35,8 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/{account}/order/info")
-    public Result<Order> getOrder(@PathVariable("account") String account,
+    @GetMapping("/info")
+    public Result<Order> getOrder(@RequestParam("account") String account,
                                   @RequestParam("id") long id) {
         //加一个账号项，做验证
         try {
@@ -48,11 +48,10 @@ public class OrderController {
     }
 
 
-    @PostMapping("/{account}/order/add")
-    public Result<String> addOrder(@PathVariable("account") String account,
-                                   @RequestBody OrderForm form) {
+    @PostMapping("/add")
+    public Result<String> addOrder(@RequestBody OrderForm form) {
         try {
-            return orderService.doOrderAdd(account, form);
+            return orderService.doOrderAdd(form);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求出错，请稍后重试");
@@ -60,11 +59,10 @@ public class OrderController {
     }
 
 
-    @PostMapping("/{account}/order/receiver/update")
-    public Result<String> updateReceiverInfo(@PathVariable("account") String account,
-                                             @RequestBody OrderForm form) {
+    @PostMapping("/update")
+    public Result<Integer> updateReceiverInfo(@RequestBody OrderForm form) {
         try {
-            return orderService.doReceiverInfoUpdate(account, form);
+            return orderService.doReceiverInfoUpdate(form);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求出错，请稍后重试");

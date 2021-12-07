@@ -62,6 +62,15 @@ public class UserController {
         }
     }
 
+    /**
+     * 用于测试登录是否有效。
+     * 通得过拦截器，返回操作成功信号.
+     */
+    @RequestMapping("/check")
+    public Result<String> check() {
+        return ResultUtil.success(null);
+    }
+
 
     @RequiredPermission
     @GetMapping("query")

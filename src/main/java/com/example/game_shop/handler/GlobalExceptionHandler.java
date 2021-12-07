@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = TokenAuthExpiredException.class)
     public Result<String> tokenExpiredExceptionHandler(){
         System.out.println("token 过期");
-        return ResultUtil.fail("token已过期");
+        return ResultUtil.fail("登录已过期");
     }
 
     /**

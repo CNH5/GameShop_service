@@ -19,7 +19,7 @@ public interface HistoryPriceMapper {
             from history_price
             where gid=#{gid}
             """)
-    List<Map<String, String>> getHistoryPriceById(long gid);
+    List<Map<String, Object>> getHistoryPriceById(long gid);
 
     @Insert("""
             insert into history_price(gid, price)

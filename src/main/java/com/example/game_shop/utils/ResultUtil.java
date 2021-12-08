@@ -34,7 +34,7 @@ public class ResultUtil {
 
     public static <T> Result<T> fail(String msg, T data) {
         Result<T> result = new Result<>();
-        return result.setCode(ResultEnum.SUCCESS.code).setMsg(msg).setData(data);
+        return result.setCode(ResultEnum.FAIL.code).setMsg(msg).setData(data);
     }
 
     public static <T> Result<T> error(String msg) {

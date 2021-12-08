@@ -52,13 +52,16 @@ public class UserService {
 
     public Result<String> doLogin(String account, String password, HttpServletResponse response) {
         if (checkForm(account, password)) {
-            Map<String, String> user = userMapper.getUserAll(account);
+            Map<String, Object> user = userMapper.getUserAll(account);
             if (user.get("password") == null) {
                 // 查询结果为空，用户不存在
                 return ResultUtil.fail("用户不存在");
             } else if (user.get("password").equals(password)) {
                 // 密码正确,设置返回头包含token
-                tokenUtil.setToken(user.get("account"), user.get("id"), response);
+                tokenUtil.setToken(
+                        String.valueOf(user.get("account")),
+                        String.valueOf(user.get("id")),
+                        response);
                 return ResultUtil.success("登录成功", null);
             } else {
                 // 密码不正确

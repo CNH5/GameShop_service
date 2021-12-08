@@ -40,7 +40,7 @@ public interface UserMapper {
             from user
             where account=#{account}
             """)
-    Map<String, String> getUserAll(String account);
+    Map<String, Object> getUserAll(String account);
 
     @Select("""
             select name

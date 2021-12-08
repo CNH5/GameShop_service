@@ -2,6 +2,7 @@ package com.example.game_shop.interceptor;
 
 import com.example.game_shop.annotation.DoWithoutToken;
 import com.example.game_shop.exception.AuthInconsistencyException;
+import com.example.game_shop.exception.NullTokenException;
 import com.example.game_shop.mapper.UserMapper;
 import com.example.game_shop.utils.TokenUtil;
 import org.springframework.http.HttpMethod;
@@ -41,7 +42,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
         if (!StringUtils.hasLength(token)) {
             // token为空,拦截
-            return false;
+            throw new NullTokenException();
         }
 
         // 获取token原始的内容

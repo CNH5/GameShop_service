@@ -27,6 +27,7 @@ public interface GameMapper {
             @Result(property = "stock", column = "stock"),
             @Result(property = "price", column = "price"),
             @Result(property = "status", column = "status"),
+            @Result(property = "cover_image", column = "cover_image"),
             @Result(property = "images", column = "id",
                     many = @Many(select = "com.example.game_shop.mapper.GamePictureMapper.getPicturesByGameId")),
             @Result(property = "history_price", column = "id",
@@ -38,7 +39,8 @@ public interface GameMapper {
                    platform,
                    stock,
                    price,
-                   status
+                   status,
+                   cover_image
             from game
             where id = #{id}
             """)

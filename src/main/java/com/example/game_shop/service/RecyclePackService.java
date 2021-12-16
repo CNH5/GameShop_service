@@ -5,7 +5,6 @@ import com.example.game_shop.mapper.RecyclePackMapper;
 import com.example.game_shop.pojo.RecyclePackGame;
 import com.example.game_shop.utils.ResultUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -25,35 +24,35 @@ public class RecyclePackService {
         return ResultUtil.success(packMapper.getGames(account, type));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public Result<Integer> deleteGames(String account, String type, List<Long> idList) {
         int deleted = packMapper.deleteGames(account, type, idList);
         return ResultUtil.success("删除成功", deleted);
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
     public Result<Integer> updateNum(String account, String type, List<Map<String, Object>> numList) {
         int deleted = packMapper.updateNum(account, type, numList);
         return ResultUtil.success("修改成功", deleted);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public Result<Integer> selectedAll(String account, String type, boolean selected) {
         int updated = packMapper.selectedAll(account, type, selected);
         return ResultUtil.success("修改成功", updated);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public Result<Integer> change(String account, String type, List<Long> idList) {
         int updated = packMapper.change(account, type, idList);
         return ResultUtil.success("修改成功", updated);
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
-    public Result<Integer> addGame(String account, long gid, String type) {
-        int added = packMapper.addGame(account, gid, type);
-        return ResultUtil.success("添加成功", added);
+    public Result<String> addGame(String account, long gid, int num, String type) {
+        if (packMapper.query(account, gid, type) == null) {
+            assert packMapper.addGame(account, gid, num, type) == 1;
+            return ResultUtil.success("新增成功", "");
+        } else {
+            assert packMapper.numPlus(account, gid,num, type) == 1;
+            return ResultUtil.success("+1成功", "");
+        }
     }
 }

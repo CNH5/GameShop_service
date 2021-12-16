@@ -85,11 +85,13 @@ public class RecyclePackController {
 
 
     @PostMapping("/add")
-    public Result<Integer> addGame(@RequestParam("account") String account,
+    public Result<String> addGame(@RequestParam("account") String account,
                                    @RequestParam("id") long id,
+                                   @RequestParam("num") int num,
                                    @RequestParam("type") String type) {
+
         try {
-            return recyclePackService.addGame(account, id, type);
+            return recyclePackService.addGame(account, id, num, type);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");

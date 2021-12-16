@@ -32,6 +32,8 @@ public class Game {
     @NonNull
     private String status;
 
+    private String cover_image;
+
     private List<String> images;
 
     private List<Map<String, Object>> history_price;

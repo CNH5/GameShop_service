@@ -91,8 +91,26 @@ public interface RecyclePackMapper {
 
 
     @Insert("""
-            insert into recycle_pack(account, gid, type)
-            values (#{account}, #{gid}, #{type})
+            insert into recycle_pack(account, gid, num, type)
+            values (#{account}, #{gid}, #{num}, #{type})
             """)
-    int addGame(String account, long gid, String type);
+    int addGame(String account, long gid, int num, String type);
+
+    @Select("""
+            select gid
+            from recycle_pack
+            where account = #{account}
+              and gid = #{gid}
+              and type = #{type}
+            """)
+    String query(String account, long gid, String type);
+
+    @Update("""
+            update recycle_pack
+            set num = num + #{num}
+            where account = #{account}
+              and gid = #{gid}
+              and type = #{type}
+            """)
+    int numPlus(String account, long gid, int num, String type);
 }

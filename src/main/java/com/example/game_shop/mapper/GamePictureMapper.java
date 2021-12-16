@@ -14,7 +14,7 @@ public interface GamePictureMapper {
             select url
             from game_picture
             where gid=#{gid}
-            order by id
+            order by `index`
             """)
     List<String> getPicturesByGameId(long gid);
 

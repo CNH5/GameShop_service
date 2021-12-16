@@ -31,7 +31,7 @@ public class UserService {
      * @return 不存在返回true，否则返回false
      */
     public boolean noUser(String account) {
-        return userMapper.getUserByAccount(account) != null;
+        return userMapper.getUserByAccount(account) == null;
     }
 
     /**

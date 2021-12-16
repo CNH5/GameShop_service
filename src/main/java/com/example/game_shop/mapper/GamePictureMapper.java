@@ -27,9 +27,9 @@ public interface GamePictureMapper {
 
     @Insert("""
             <script>
-                insert into game_picture(gid,url)
-                <foreach collection="list" item="url" open="values" separator=",">
-                    (#{gid}, #{url})
+                insert into game_picture(gid, id, url)
+                <foreach collection="list" item="url" index="index" open="values" separator=",">
+                    (#{gid}, #{index}, #{url})
                 </foreach>
             </script>
             """)

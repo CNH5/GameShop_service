@@ -47,7 +47,7 @@ public class GameService {
             List<BasicGameInfo> gameList = gameMapper.queryGame(name, platform);
             // 步长20
             int step = 20;
-            // 还要防止下标越界...
+            // TODO: 还要防止下标越界...
             return ResultUtil.success(gameList.subList((page - 1) * step, (page * step)));
         } else {
             return ResultUtil.fail("游戏所在平台不正确");

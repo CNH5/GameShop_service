@@ -28,12 +28,12 @@ public interface OrderMapper {
                 <where>
                     <if test="true">and account = #{account}</if>
                     <if test="type != null">and type = #{type}</if>
-                    <if test="status == 'false'">and express_delivery_id is null</if>
-                    <if test="status == 'true'">and express_delivery_id is not null</if>
+                    <if test="shipped == 'false'">and express_delivery_id is null</if>
+                    <if test="shipped == 'true'">and express_delivery_id is not null</if>
                 </where>
             </script>
             """)
-    List<BasicOrder> getOrderList(String account, String status, String type);
+    List<BasicOrder> getOrderList(String account, String shipped, String type);
 
 
     @Results(id = "order", value = {

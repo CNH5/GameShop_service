@@ -1,7 +1,6 @@
 package com.example.game_shop.service;
 
 import com.example.game_shop.Result.Result;
-import com.example.game_shop.mapper.GameMapper;
 import com.example.game_shop.mapper.RecyclePackMapper;
 import com.example.game_shop.pojo.RecyclePackGame;
 import com.example.game_shop.utils.ResultUtil;
@@ -20,9 +19,6 @@ import java.util.Map;
 public class RecyclePackService {
     @Resource
     private RecyclePackMapper packMapper;
-
-    @Resource
-    private GameMapper gameMapper;
 
 
     public Result<List<RecyclePackGame>> getGames(String account, String type) {
@@ -57,7 +53,7 @@ public class RecyclePackService {
 
     @Transactional(rollbackFor = Exception.class)
     public Result<Integer> addGame(String account, long gid, String type) {
-        int added = packMapper.addGame(account, gid, gameMapper.getPrice(gid), type);
+        int added = packMapper.addGame(account, gid, type);
         return ResultUtil.success("添加成功", added);
     }
 }

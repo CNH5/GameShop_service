@@ -24,7 +24,7 @@ public class GameController {
 
 
     @DoWithoutToken
-    @GetMapping("/info/list")
+    @GetMapping("/list")
     public Result<List<BasicGameInfo>> queryGame(@RequestParam(value = "name", defaultValue = "") String name,
                                                  @RequestParam("platform") String platform,
                                                  @RequestParam(value = "page", defaultValue = "1") int page) {

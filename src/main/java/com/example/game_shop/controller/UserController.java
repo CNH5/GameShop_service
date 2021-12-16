@@ -55,7 +55,7 @@ public class UserController {
     @GetMapping("/{account}/info")
     public Result<User> getInfo(@PathVariable String account) {
         try {
-            return userService.getUser(account);
+            return userService.getInfo(account);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");

@@ -46,7 +46,7 @@ public class UserService {
     /**
      * 获取账号对应的用户信息
      */
-    public Result<User> getUser(String account) {
+    public Result<User> getInfo(String account) {
         return ResultUtil.success(userMapper.getUserByAccount(account));
     }
 

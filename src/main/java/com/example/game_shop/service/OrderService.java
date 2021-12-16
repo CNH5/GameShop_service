@@ -13,7 +13,8 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.regex.Pattern;
+
+import static com.example.game_shop.bean.Const.phoneNumber;
 
 /**
  * @author sheng
@@ -27,7 +28,6 @@ public class OrderService {
     @Resource
     private OrderGameMapper orderGameMapper;
 
-    private static final Pattern phoneNumber = Pattern.compile("^(13[0-9]|14[01456879]|15[0-3,5-9]|16[2567]|17[0-8]|18[0-9]|19[0-3,5-9])d{8}$");
 
     public Result<List<BasicOrder>> getOrderList(String account, String shipped, String type) {
         return ResultUtil.success(orderMapper.getOrderList(account, shipped, type));

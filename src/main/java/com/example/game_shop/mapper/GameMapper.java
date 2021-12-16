@@ -69,11 +69,4 @@ public interface GameMapper {
             </script>
             """)
     List<BasicGameInfo> queryGame(String name, String platform);
-
-    @Select("""
-            select price
-            from game
-            where id=#{gid}
-            """)
-    double getPrice(long gid);
 }

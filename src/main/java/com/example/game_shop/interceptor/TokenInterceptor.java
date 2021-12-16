@@ -35,7 +35,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (HttpMethod.OPTIONS.toString().equals(request.getMethod()) || doWithoutToken(handler)) {
-            // OPTIONS和不需要使用token的请求直接放行
+            // OPTIONS请求和不需要使用token的请求直接放行
             return true;
         }
 

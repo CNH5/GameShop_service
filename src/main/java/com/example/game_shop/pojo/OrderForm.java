@@ -1,6 +1,8 @@
 package com.example.game_shop.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,8 @@ import java.util.Map;
  * @date 2021/11/30 11:21
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderForm {
     private long id;
     private String account;

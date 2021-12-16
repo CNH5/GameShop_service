@@ -91,8 +91,8 @@ public interface RecyclePackMapper {
 
 
     @Insert("""
-            insert into recycle_pack(account, gid, price, type)
-            values (#{account}, #{gid}, #{price}, #{type})
+            insert into recycle_pack(account, gid, type)
+            values (#{account}, #{gid}, #{type})
             """)
-    int addGame(String account, long gid, double price, String type);
+    int addGame(String account, long gid, String type);
 }

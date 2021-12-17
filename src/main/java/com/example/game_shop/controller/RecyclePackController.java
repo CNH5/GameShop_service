@@ -58,7 +58,7 @@ public class RecyclePackController {
         }
     }
 
-    @PostMapping("/select")
+    @PostMapping("/change")
     public Result<Integer> change(@RequestParam("account") String account,
                                   @RequestParam("type") String type,
                                   @RequestParam("idList") List<Long> idList) {
@@ -89,7 +89,6 @@ public class RecyclePackController {
                                    @RequestParam("id") long id,
                                    @RequestParam("num") int num,
                                    @RequestParam("type") String type) {
-
         try {
             return recyclePackService.addGame(account, id, num, type);
         } catch (Exception e) {

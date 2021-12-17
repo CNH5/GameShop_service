@@ -35,10 +35,12 @@ public class RecyclePackService {
         return ResultUtil.success("修改成功", deleted);
     }
 
+
     public Result<Integer> selectedAll(String account, String type, boolean selected) {
         int updated = packMapper.selectedAll(account, type, selected);
         return ResultUtil.success("修改成功", updated);
     }
+
 
     public Result<Integer> change(String account, String type, List<Long> idList) {
         int updated = packMapper.change(account, type, idList);
@@ -47,11 +49,12 @@ public class RecyclePackService {
 
 
     public Result<String> addGame(String account, long gid, int num, String type) {
+        // TODO: 这地方有毒，插入结果是1但是没保存到数据库里
         if (packMapper.query(account, gid, type) == null) {
             assert packMapper.addGame(account, gid, num, type) == 1;
             return ResultUtil.success("新增成功", "");
         } else {
-            assert packMapper.numPlus(account, gid,num, type) == 1;
+            assert packMapper.numPlus(account, gid, num, type) == 1;
             return ResultUtil.success("+1成功", "");
         }
     }

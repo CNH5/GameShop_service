@@ -17,10 +17,10 @@ import java.util.Map;
 public interface UserMapper {
     @Insert("""
             insert into
-            user(account, password, name)
-            value (#{account}, #{password}, #{name})
+            user(account, password, name, avatar)
+            value (#{account}, #{password}, #{name}, #{avatar})
             """)
-    void insertUser(String account, String password, String name);
+    void insertUser(String account, String password, String name, String avatar);
 
     @Select("""
             select

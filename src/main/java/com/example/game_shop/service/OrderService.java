@@ -1,6 +1,7 @@
 package com.example.game_shop.service;
 
 import com.example.game_shop.Result.Result;
+import com.example.game_shop.mapper.GameMapper;
 import com.example.game_shop.mapper.OrderGameMapper;
 import com.example.game_shop.mapper.OrderMapper;
 import com.example.game_shop.pojo.BasicOrder;
@@ -12,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.game_shop.bean.Const.phoneNumber;
 
@@ -28,6 +31,9 @@ public class OrderService {
     @Resource
     private OrderGameMapper orderGameMapper;
 
+    @Resource
+    private GameMapper gameMapper;
+
 
     public Result<List<BasicOrder>> getOrderList(String account, String shipped, String type) {
         return ResultUtil.success(orderMapper.getOrderList(account, shipped, type));
@@ -38,12 +44,20 @@ public class OrderService {
         return order != null ? ResultUtil.success(order) : ResultUtil.fail("订单不存在");
     }
 
+
     @Transactional(rollbackFor = Exception.class)
     public Result<String> doOrderAdd(OrderForm form) {
         // 订单校验
         String msg = checkOrderForm(form);
         if (msg == null) {
-            // 无错误信息
+            // 无错误信息，校验游戏信息是否正确
+            List<Long> idList = new ArrayList<>();
+            for (Map<String, Object> data : form.getGames()) {
+                idList.add((Long) data.get("id"));
+            }
+            if (gameMapper.hasN(idList) != form.getGames().size()) {
+                return ResultUtil.fail("商品序列不正确");
+            }
             // 插入订单
             assert orderMapper.insert(form) == 1;
             // 插入订单-商品
@@ -71,10 +85,10 @@ public class OrderService {
     }
 
     private String checkOrderForm(OrderForm form) {
-        if (!StringUtils.hasLength(form.getName().trim())) {
+        if (!StringUtils.hasLength(form.getName())) {
             return "收货人姓名不能为空";
 
-        } else if (!StringUtils.hasLength(form.getLocation().trim())) {
+        } else if (!StringUtils.hasLength(form.getLocation())) {
             return "收货地址不能为空";
 
         } else if (!StringUtils.hasLength(form.getPhoneNumber())) {

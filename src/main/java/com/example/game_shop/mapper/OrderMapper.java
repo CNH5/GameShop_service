@@ -61,8 +61,8 @@ public interface OrderMapper {
             orders(account, name, type, location, phoneNumber)
             values(#{form.account}, #{form.name}, #{form.type}, #{form.location}, #{form.phoneNumber})
             """)
-    @Options(useGeneratedKeys = true, keyProperty = "order.id")
-    int insert(OrderForm form);
+    @Options(useGeneratedKeys = true, keyProperty = "form.id")
+    int insert(@Param("form") OrderForm form);
 
 
     @Update("""
@@ -72,5 +72,5 @@ public interface OrderMapper {
                 phoneNumber=#{form.phoneNumber}
             where account=#{form.account} and id=#{form.id}
             """)
-    int updateReceiverInfo(OrderForm form);
+    int updateReceiverInfo(@Param("form") OrderForm form);
 }

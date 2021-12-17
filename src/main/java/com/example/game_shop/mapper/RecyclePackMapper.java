@@ -30,15 +30,6 @@ public interface RecyclePackMapper {
             """)
     List<RecyclePackGame> getGames(String account, String type);
 
-    @Select("""
-            select count(*) > 0
-            from recycle_pack
-            where account = #{account}
-              and gid = #{id}
-              and type = #{type}
-            """)
-    boolean hasGame(String account, long id, String type);
-
     @Delete("""
             <script>
                 delete

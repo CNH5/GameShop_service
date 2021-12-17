@@ -34,7 +34,7 @@ public class UserController {
         } catch (Exception e) {
             // 系统出错
             e.printStackTrace();
-            return ResultUtil.error("请求失败,请稍后重试");
+            return ResultUtil.error("请求出错");
         }
     }
 

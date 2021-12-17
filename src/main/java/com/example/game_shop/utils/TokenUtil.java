@@ -76,7 +76,7 @@ public class TokenUtil {
             // 老年token,刷新token
             setToken(account, id, response);
         } else if (timeOfUse >= oldToken) {
-            // 过期token,返回token无效.
+            // 过期token,返回token无效
             throw new TokenAuthExpiredException();
         }
     }

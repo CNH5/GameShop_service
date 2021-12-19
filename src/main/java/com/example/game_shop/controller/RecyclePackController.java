@@ -86,9 +86,9 @@ public class RecyclePackController {
 
     @PostMapping("/add")
     public Result<String> addGame(@RequestParam("account") String account,
-                                   @RequestParam("id") long id,
-                                   @RequestParam("num") int num,
-                                   @RequestParam("type") String type) {
+                                  @RequestParam("id") long id,
+                                  @RequestParam("num") int num,
+                                  @RequestParam("type") String type) {
         try {
             return recyclePackService.addGame(account, id, num, type);
         } catch (Exception e) {

@@ -49,13 +49,16 @@ public class RecyclePackService {
 
 
     public Result<String> addGame(String account, long gid, int num, String type) {
-        // TODO: 这地方有毒，插入结果是1但是没保存到数据库里
+        // 很奇怪，断言执行mapper在controller中不能自动提交，但是在测试类里面又可以...
         if (packMapper.query(account, gid, type) == null) {
-            assert packMapper.addGame(account, gid, num, type) == 1;
-            return ResultUtil.success("新增成功", "");
+            int added = packMapper.addGame(account, gid, num, type);
+            assert added == 1;
+
         } else {
-            assert packMapper.numPlus(account, gid, num, type) == 1;
-            return ResultUtil.success("+1成功", "");
+            int updated = packMapper.numPlus(account, gid, num, type);
+            assert updated == 1;
+
         }
+        return ResultUtil.success("添加成功", "");
     }
 }

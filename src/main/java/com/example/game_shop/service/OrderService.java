@@ -59,9 +59,12 @@ public class OrderService {
                 return ResultUtil.fail("商品序列不正确");
             }
             // 插入订单
-            assert orderMapper.insert(form) == 1;
+            int insertOrder = orderMapper.insert(form);
+            assert insertOrder == 1;
+
             // 插入订单-商品
-            assert orderGameMapper.insertGame(form) == form.getGames().size();
+            int insertGame = orderGameMapper.insertGame(form);
+            assert insertGame ==form.getGames().size();
 
             return ResultUtil.success("添加成功", null);
         } else {

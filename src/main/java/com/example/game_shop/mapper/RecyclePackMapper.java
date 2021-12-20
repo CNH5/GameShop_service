@@ -21,7 +21,8 @@ public interface RecyclePackMapper {
                    cover_image,
                    platform,
                    status,
-                   stock
+                   stock,
+                   selected
             from recycle_pack rp
                      join game g on rp.gid = g.id
             where account = #{account}

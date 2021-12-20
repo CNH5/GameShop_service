@@ -33,4 +33,6 @@ public class RecyclePackGame {
     private String status;
 
     private int stock;
+
+    private boolean selected;
 }

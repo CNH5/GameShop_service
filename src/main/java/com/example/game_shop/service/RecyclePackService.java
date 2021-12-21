@@ -42,7 +42,7 @@ public class RecyclePackService {
     }
 
 
-    public Result<Integer> change(String account, String type, List<Long> idList) {
+    public Result<Integer> selected(String account, String type, List<Long> idList) {
         int updated = packMapper.change(account, type, idList);
         return ResultUtil.success("修改成功", updated);
     }

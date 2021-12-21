@@ -47,7 +47,7 @@ public interface RecyclePackMapper {
             <script>
                 update recycle_pack
                 <trim prefix="set" suffixOverrides=",">
-                    <foreach collection="numList" item="game" open="num=case" close="end,">
+                    <foreach collection="numList" item="game" open="num=case" close="else num end,">
                         when gid=#{game.id} then #{game.num}
                     </foreach>
                 </trim>
@@ -59,19 +59,19 @@ public interface RecyclePackMapper {
 
     @Update("""
             update recycle_pack
-            set change=#{change}
+            set selected=#{selected}
             where account = #{account}
               and type = #{type}
             """)
-    int selectedAll(@Param("account") String account, @Param("type") String type, @Param("change") boolean selected);
+    int selectedAll(@Param("account") String account, @Param("type") String type, @Param("selected") boolean selected);
 
     @Update("""
             <script>
                 update recycle_pack
-                set change= not change
+                set selected= not selected
                 <where>
                     <foreach collection="idList" item="id">
-                        or id = #{id}
+                        or gid = #{id}
                     </foreach>
                     and account = #{account}
                     and type = #{type}

@@ -1,5 +1,7 @@
 package com.example.game_shop.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.example.game_shop.Result.Result;
 import com.example.game_shop.pojo.RecyclePackGame;
 import com.example.game_shop.service.RecyclePackService;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author sheng
@@ -16,17 +17,17 @@ import java.util.Map;
  */
 @RestController
 @CrossOrigin
-@RequestMapping("/recycle_pack")
+@RequestMapping("/pack")
 public class RecyclePackController {
     @Resource
-    private RecyclePackService recyclePackService;
+    private RecyclePackService PackService;
 
 
     @GetMapping("/list")
     public Result<List<RecyclePackGame>> getGames(@RequestParam("account") String account,
                                                   @RequestParam("type") String type) {
         try {
-            return recyclePackService.getGames(account, type);
+            return PackService.getGames(account, type);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");
@@ -37,33 +38,33 @@ public class RecyclePackController {
     @PostMapping("/delete")
     public Result<Integer> deleteGame(@RequestParam("account") String account,
                                       @RequestParam("type") String type,
-                                      @RequestParam("idList") List<Long> idList) {
+                                      @RequestParam("idList") String idListString) {
         try {
-            return recyclePackService.deleteGames(account, type, idList);
+            return PackService.deleteGames(account, type, JSONObject.parseArray(idListString, Long.class));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");
         }
     }
 
-    @PostMapping("/select/all")
+    @PostMapping("/selected/all")
     public Result<Integer> selectAll(@RequestParam("account") String account,
                                      @RequestParam("type") String type,
                                      @RequestParam("selected") boolean selected) {
         try {
-            return recyclePackService.selectedAll(account, type, selected);
+            return PackService.selectedAll(account, type, selected);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");
         }
     }
 
-    @PostMapping("/change")
+    @PostMapping("/selected")
     public Result<Integer> change(@RequestParam("account") String account,
                                   @RequestParam("type") String type,
-                                  @RequestParam("idList") List<Long> idList) {
+                                  @RequestParam("idList") String idListString) {
         try {
-            return recyclePackService.change(account, type, idList);
+            return PackService.selected(account, type, JSONObject.parseArray(idListString, Long.class));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");
@@ -74,9 +75,14 @@ public class RecyclePackController {
     @PostMapping("/update")
     public Result<Integer> updateNum(@RequestParam("account") String account,
                                      @RequestParam("type") String type,
-                                     @RequestParam("numList") List<Map<String, Object>> numList) {
+                                     @RequestParam("numList") String numListString) {
         try {
-            return recyclePackService.updateNum(account, type, numList);
+            return PackService.updateNum(
+                    account,
+                    type,
+                    JSONObject.parseObject(numListString, new TypeReference<>() {
+                    })
+            );
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");
@@ -90,7 +96,7 @@ public class RecyclePackController {
                                   @RequestParam("num") int num,
                                   @RequestParam("type") String type) {
         try {
-            return recyclePackService.addGame(account, id, num, type);
+            return PackService.addGame(account, id, num, type);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");

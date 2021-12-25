@@ -24,5 +24,5 @@ public class OrderForm {
     /**
      * [{"id": id, "num": num}]
      */
-    private List<Map<String, Object>> games;
+    private List<Map<String, String>> games;
 }

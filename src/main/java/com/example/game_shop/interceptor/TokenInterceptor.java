@@ -1,9 +1,11 @@
 package com.example.game_shop.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.game_shop.annotation.DoWithoutToken;
 import com.example.game_shop.exception.AuthInconsistencyException;
 import com.example.game_shop.exception.NullTokenException;
 import com.example.game_shop.mapper.UserMapper;
+import com.example.game_shop.utils.RequestWrapper;
 import com.example.game_shop.utils.TokenUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -44,13 +46,25 @@ public class TokenInterceptor implements HandlerInterceptor {
             // token为空,拦截
             throw new NullTokenException();
         }
-        // TODO: 增加对RequestBody的支持...
         // 获取token原始的内容
         Map<String, String> tokenMap = tokenUtil.getTokenData(token);
+        String tokenId = tokenMap.get("id");
+        String tokenAccount = tokenMap.get("account");
         // token有效就往下执行，无效就不执行
-        if (tokenMap.get("id") != null && tokenMap.get("id").equals(userMapper.getId(tokenMap.get("account")))) {
+        if (tokenId != null && tokenId.equals(userMapper.getId(tokenAccount))) {
+            // 获取请求参数中的account项
+            String account = request.getParameter("account");
+            if (account == null) {
+                // 获取@RequestBody的账号项
+                RequestWrapper requestWrapper = new RequestWrapper(request);
+                JSONObject dataJson = JSONObject.parseObject(requestWrapper.getBody());
+
+                if (dataJson != null) {
+                    account = dataJson.getString("account");
+                }
+            }
             // 判断account和token中的account是否一致
-            if (!tokenMap.get("account").equals(request.getParameter("account"))) {
+            if (!tokenAccount.equals(account)) {
                 // 不一致,返回token不一致异常
                 throw new AuthInconsistencyException();
             }
@@ -77,7 +91,8 @@ public class TokenInterceptor implements HandlerInterceptor {
             // 如果有注解，就不需要token
             return withoutToken != null;
         }
-        return false;
+        // 请求的对象不是方法，也不应该需要token
+        return true;
     }
 
     @Override

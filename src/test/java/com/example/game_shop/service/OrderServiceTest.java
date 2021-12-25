@@ -42,10 +42,10 @@ class OrderServiceTest {
         form.setPhoneNumber("18877866248");
         form.setName("dolphin");
 
-        List<Map<String, Object>> games = new ArrayList<>();
+        List<Map<String, String>> games = new ArrayList<>();
 
-        for (long[] data : new long[][]{{1, 2}, {3, 4}, {5, 6}}) {
-            Map<String, Object> game = new HashMap<>();
+        for (String[] data : new String[][]{{"1", "2"}, {"3", "4"}, {"5", "6"}}) {
+            Map<String, String> game = new HashMap<>();
             game.put("id", data[0]);
             game.put("num", data[1]);
             games.add(game);

@@ -52,8 +52,8 @@ public class OrderService {
         if (msg == null) {
             // 无错误信息，校验游戏信息是否正确
             List<Long> idList = new ArrayList<>();
-            for (Map<String, Object> data : form.getGames()) {
-                idList.add((Long) data.get("id"));
+            for (Map<String, String> data : form.getGames()) {
+                idList.add(Long.parseLong(data.get("id")));
             }
             if (gameMapper.hasN(idList) != form.getGames().size()) {
                 return ResultUtil.fail("商品序列不正确");
@@ -64,7 +64,7 @@ public class OrderService {
 
             // 插入订单-商品
             int insertGame = orderGameMapper.insertGame(form);
-            assert insertGame ==form.getGames().size();
+            assert insertGame == form.getGames().size();
 
             return ResultUtil.success("添加成功", null);
         } else {
@@ -88,23 +88,26 @@ public class OrderService {
     }
 
     private String checkOrderForm(OrderForm form) {
-        if (!StringUtils.hasLength(form.getName())) {
-            return "收货人姓名不能为空";
-
-        } else if (!StringUtils.hasLength(form.getLocation())) {
-            return "收货地址不能为空";
-
-        } else if (!StringUtils.hasLength(form.getPhoneNumber())) {
-            return "电话号码不能为空";
-
-        } else if (!phoneNumber.matcher(form.getPhoneNumber()).matches()) {
-            return "电话号码不正确";
-
-        } else if (!StringUtils.hasLength(form.getType()) ||
+        System.out.println(form);
+        if (!StringUtils.hasLength(form.getType()) ||
                 !List.of("回收", "购买").contains(form.getType())) {
             return "订单类型不正确";
-
         }
+        if ("购买".equals(form.getType())) {
+            if (!StringUtils.hasLength(form.getName())) {
+                return "收货人姓名不能为空";
+
+            } else if (!StringUtils.hasLength(form.getLocation())) {
+                return "收货地址不能为空";
+
+            } else if (!StringUtils.hasLength(form.getPhoneNumber())) {
+                return "电话号码不能为空";
+
+            } else if (!phoneNumber.matcher(form.getPhoneNumber()).matches()) {
+                return "电话号码不正确";
+            }
+        }
+
         return null;
     }
 }

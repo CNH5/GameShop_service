@@ -50,12 +50,14 @@ public class OrderController {
 
     @PostMapping("/add")
     public Result<String> addOrder(@RequestBody OrderForm form) {
-        try {
-            return orderService.doOrderAdd(form);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultUtil.error("请求出错，请稍后重试");
-        }
+        System.out.println(form);
+//        try {
+//            return orderService.doOrderAdd(form);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResultUtil.error("请求出错，请稍后重试");
+//        }
+        return ResultUtil.fail("test");
     }
 
 

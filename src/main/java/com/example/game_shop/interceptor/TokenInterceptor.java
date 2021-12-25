@@ -44,19 +44,18 @@ public class TokenInterceptor implements HandlerInterceptor {
             // token为空,拦截
             throw new NullTokenException();
         }
-
+        // TODO: 增加对RequestBody的支持...
         // 获取token原始的内容
-        Map<String, String> origin = tokenUtil.parseToken(token);
+        Map<String, String> tokenMap = tokenUtil.getTokenData(token);
         // token有效就往下执行，无效就不执行
-        if (origin.get("id") != null && origin.get("id").equals(userMapper.getId(origin.get("account")))) {
+        if (tokenMap.get("id") != null && tokenMap.get("id").equals(userMapper.getId(tokenMap.get("account")))) {
             // 判断account和token中的account是否一致
-            if (!origin.get("account").equals(request.getParameter("account"))) {
-                // 不一致,返回异常
+            if (!tokenMap.get("account").equals(request.getParameter("account"))) {
+                // 不一致,返回token不一致异常
                 throw new AuthInconsistencyException();
             }
             // 判断 token 是否需要更新
-            tokenUtil.updateToken(origin.get("account"), origin.get("id"),
-                    Long.parseLong(origin.get("timeStamp")), response);
+            tokenUtil.updateToken(tokenMap, response);
             return true;
         }
         return false;

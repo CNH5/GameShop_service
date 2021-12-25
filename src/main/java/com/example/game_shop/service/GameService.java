@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author sheng
@@ -32,6 +33,13 @@ public class GameService {
     public Result<Game> getGameById(long id) {
         Game game = gameMapper.getGameById(id);
         return game != null ? ResultUtil.success(game) : ResultUtil.fail("游戏不存在");
+    }
+
+    /**
+     * 查询对应游戏的封面、价格和名称
+     */
+    public Result<List<Map<String, Object>>> getGames(List<Long> idList) {
+        return ResultUtil.success(gameMapper.getGames(idList));
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.game_shop.bean;
+package com.example.game_shop.config;
 
 /**
  * 配置类

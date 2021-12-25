@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.game_shop.bean.Const.phoneNumber;
+import static com.example.game_shop.config.ConstParam.phoneNumber;
 
 /**
  * @author sheng

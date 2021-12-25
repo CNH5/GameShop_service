@@ -5,6 +5,7 @@ import com.example.game_shop.pojo.Game;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author sheng
@@ -57,6 +58,20 @@ public interface GameMapper {
             where id = #{id}
             """)
     Game getGameById(long id);
+
+
+    @Select("""
+            <script>
+                select name,
+                       cover_image,
+                       price
+                from game
+                <foreach collection="list" item="id" open="where" separator="or">
+                    id = #{id}
+                </foreach>
+            </script>
+            """)
+    List<Map<String, Object>> getGames(@Param("list") List<Long> idList);
 
     @Update("""
             <script>

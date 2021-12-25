@@ -28,8 +28,8 @@ public interface OrderMapper {
                 <where>
                     <if test="true">and account = #{account}</if>
                     <if test="type != null">and type = #{type}</if>
-                    <if test="shipped == 'false'">and express_delivery_id is null</if>
-                    <if test="shipped == 'true'">and express_delivery_id is not null</if>
+                    <if test="shipped == 'false'">and status = '未发货'</if>
+                    <if test="shipped == 'true'">and status = '已发货'</if>
                 </where>
             </script>
             """)

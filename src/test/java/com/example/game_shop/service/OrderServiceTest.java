@@ -36,11 +36,14 @@ class OrderServiceTest {
     void doOrderAdd() {
         OrderForm form = new OrderForm();
         form.setAccount("sheng");
+        form.setType("回收");
+
         form.setLocation("火星");
         form.setPhoneNumber("18877866248");
-        form.setType("回收");
         form.setName("dolphin");
+
         List<Map<String, Object>> games = new ArrayList<>();
+
         for (long[] data : new long[][]{{1, 2}, {3, 4}, {5, 6}}) {
             Map<String, Object> game = new HashMap<>();
             game.put("id", data[0]);

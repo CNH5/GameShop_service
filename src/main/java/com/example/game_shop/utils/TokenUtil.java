@@ -32,7 +32,7 @@ public class TokenUtil {
      *
      * @return token
      */
-    public String getToken(String account, String id) {
+    public String parseToken(String account, String id) {
         return JWT
                 .create()
                 .withClaim("account", account)
@@ -46,13 +46,13 @@ public class TokenUtil {
      */
     public void setToken(String account, String id, HttpServletResponse response) {
         response.addHeader("Access-Control-Expose-Headers", "token");
-        response.setHeader("token", getToken(account, id));
+        response.setHeader("token", parseToken(account, id));
     }
 
     /**
      * 将token转化为原来的内容
      */
-    public Map<String, String> parseToken(String token) {
+    public Map<String, String> getTokenData(String token) {
         HashMap<String, String> map = new HashMap<>();
         DecodedJWT decodedjwt = JWT.require(Algorithm.HMAC256(privateKey)).build().verify(token);
 
@@ -65,16 +65,14 @@ public class TokenUtil {
     /**
      * 根据使用时间，判断是否需要刷新token
      *
-     * @param account   账号
-     * @param id        用户id
-     * @param timestamp token的设置时间
-     * @param response  回复头
+     * @param tokenMap token
+     * @param response 回复头
      */
-    public void updateToken(String account, String id, long timestamp, HttpServletResponse response) throws TokenAuthExpiredException {
-        long timeOfUse = System.currentTimeMillis() - timestamp;
+    public void updateToken(Map<String, String> tokenMap, HttpServletResponse response) throws TokenAuthExpiredException {
+        long timeOfUse = System.currentTimeMillis() - Long.parseLong(tokenMap.get("timeStamp"));
         if (timeOfUse >= yangToken && timeOfUse < oldToken) {
             // 老年token,刷新token
-            setToken(account, id, response);
+            setToken(tokenMap.get("account"), tokenMap.get("id"), response);
         } else if (timeOfUse >= oldToken) {
             // 过期token,返回token无效
             throw new TokenAuthExpiredException();

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -50,21 +51,11 @@ public class TokenInterceptor implements HandlerInterceptor {
         Map<String, String> tokenMap = tokenUtil.getTokenData(token);
         String tokenId = tokenMap.get("id");
         String tokenAccount = tokenMap.get("account");
+
         // token有效就往下执行，无效就不执行
         if (tokenId != null && tokenId.equals(userMapper.getId(tokenAccount))) {
-            // 获取请求参数中的account项
-            String account = request.getParameter("account");
-            if (account == null) {
-                // 获取@RequestBody的账号项
-                RequestWrapper requestWrapper = new RequestWrapper(request);
-                JSONObject dataJson = JSONObject.parseObject(requestWrapper.getBody());
-
-                if (dataJson != null) {
-                    account = dataJson.getString("account");
-                }
-            }
             // 判断account和token中的account是否一致
-            if (!tokenAccount.equals(account)) {
+            if (!tokenAccount.equals(getAccount(request))) {
                 // 不一致,返回token不一致异常
                 throw new AuthInconsistencyException();
             }
@@ -73,6 +64,21 @@ public class TokenInterceptor implements HandlerInterceptor {
             return true;
         }
         return false;
+    }
+
+    // 获取请求参数中的account项
+    private String getAccount(HttpServletRequest request) throws IOException {
+        String account = request.getParameter("account");
+        if (account == null) {
+            // 获取@RequestBody的账号项
+            RequestWrapper requestWrapper = new RequestWrapper(request);
+            JSONObject dataJson = JSONObject.parseObject(requestWrapper.getBody());
+
+            if (dataJson != null) {
+                account = dataJson.getString("account");
+            }
+        }
+        return account;
     }
 
     /**
@@ -91,7 +97,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             // 如果有注解，就不需要token
             return withoutToken != null;
         }
-        // 请求的对象不是方法，也不应该需要token
+        // 请求的对象不是方法，不应该需要token
         return true;
     }
 

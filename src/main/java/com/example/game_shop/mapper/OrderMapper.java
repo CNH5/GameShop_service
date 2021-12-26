@@ -6,6 +6,7 @@ import com.example.game_shop.pojo.OrderForm;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author sheng
@@ -73,4 +74,12 @@ public interface OrderMapper {
             where account=#{form.account} and id=#{form.id}
             """)
     int updateReceiverInfo(@Param("form") OrderForm form);
+
+    @Select("""
+            select count(if(status = '已发货', id, null)) as shipped,
+                   count(if(status = '未发货', id, null)) as unshipped
+            from orders
+            where account = #{account};
+            """)
+    Map<String, Object> getCounts(String account);
 }

@@ -1,6 +1,7 @@
 package com.example.game_shop.service;
 
 import com.example.game_shop.Result.Result;
+import com.example.game_shop.mapper.OrderMapper;
 import com.example.game_shop.mapper.UserMapper;
 import com.example.game_shop.pojo.User;
 import com.example.game_shop.utils.ResultUtil;
@@ -23,7 +24,27 @@ public class UserService {
     private UserMapper userMapper;
 
     @Resource
+    private OrderMapper orderMapper;
+
+    @Resource
     private TokenUtil tokenUtil;
+
+
+    /**
+     * 获取用户信息界面的数据，包括用户的头像、昵称、已发货订单数和未发货订单数
+     */
+    public Result<Map<String, Object>> getConfigPageData(String account) {
+        if (noUser(account)) {
+            return ResultUtil.fail("用户不存在");
+        }
+        Map<String, Object> orderData = orderMapper.getCounts(account);
+        Map<String, Object> userData = userMapper.getUserAll(account);
+
+        orderData.put("avatar", userData.get("avatar"));
+        orderData.put("name", userData.get("name"));
+
+        return ResultUtil.success("获取成功", orderData);
+    }
 
     /**
      * 检验用户是否存在

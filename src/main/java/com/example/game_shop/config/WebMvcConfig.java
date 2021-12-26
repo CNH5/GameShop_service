@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WebMvcConfig {
     @Bean
-    public FilterRegistrationBean repeatedlyReadFilter() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
+    public FilterRegistrationBean<RepeatedlyReadFilter> repeatedlyReadFilter() {
+        // 设置过滤器
+        FilterRegistrationBean<RepeatedlyReadFilter> registration = new FilterRegistrationBean<>();
         RepeatedlyReadFilter repeatedlyReadFilter = new RepeatedlyReadFilter();
         registration.setFilter(repeatedlyReadFilter);
         registration.addUrlPatterns("/*");

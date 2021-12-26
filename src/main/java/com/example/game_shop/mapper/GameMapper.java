@@ -13,25 +13,6 @@ import java.util.Map;
  */
 @Mapper
 public interface GameMapper {
-    // 这里还需要另作修改，封面图片对不上
-    @Insert("""
-            insert into game(name, platform, stock, price)
-            values (#{name}, #{platform}, #{stock}, #{cover_image})
-            """)
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    int insertGame(Game game);
-
-    @Select("""
-            <script>
-                select count(*)
-                from game
-                <foreach collection="idList" item="id" open="where" separator="or">
-                    id = #{id}
-                </foreach>
-                  and status = '正常'
-            </script>
-            """)
-    int hasN(List<Long> idList);
 
     @Results(id = "game", value = {
             @Result(property = "id", column = "id"),

@@ -69,16 +69,10 @@ public class GameService {
         }
     }
 
+    // 不应该一次性把全部修改完，应该分别弄成修改图片、修改文本之类的
     @Transactional(rollbackFor = Exception.class)
     public Result<Integer> updateGameInfo(Game game) {
-        int updated = gameMapper.updateGameInfo(game);
-        int deleted = pictureMapper.deletePicture(game.getId());
-        int inserted = pictureMapper.addPicture(game.getId(), game.getImages());
-
-        System.out.println("update game: " + updated);
-        System.out.println("delete picture: " + deleted);
-        System.out.println("insert picture: " + inserted);
-
-        return ResultUtil.success("修改成功", null);
+        System.out.println(game);
+        return ResultUtil.error("暂未完成~");
     }
 }

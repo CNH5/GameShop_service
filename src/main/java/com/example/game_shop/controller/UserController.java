@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author sheng
@@ -52,10 +53,20 @@ public class UserController {
     }
 
 
-    @GetMapping("/{account}/info")
-    public Result<User> getInfo(@PathVariable String account) {
+    @GetMapping("/info")
+    public Result<User> getInfo(@RequestParam String account) {
         try {
             return userService.getInfo(account);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("请求失败,请稍后重试");
+        }
+    }
+
+    @GetMapping("/config/info")
+    public Result<Map<String, Object>> getConfigPageInfo(@RequestParam String account) {
+        try {
+            return userService.getConfigPageData(account);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");

@@ -1,6 +1,7 @@
 package com.example.game_shop.service;
 
 import com.example.game_shop.Result.Result;
+import com.example.game_shop.mapper.GameMapper;
 import com.example.game_shop.mapper.OrderGameMapper;
 import com.example.game_shop.mapper.OrderMapper;
 import com.example.game_shop.pojo.BasicOrder;
@@ -12,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.game_shop.config.ConstParam.phoneNumber;
 
@@ -27,6 +30,9 @@ public class OrderService {
 
     @Resource
     private OrderGameMapper orderGameMapper;
+
+    @Resource
+    private GameMapper gameMapper;
 
 
     public Result<List<BasicOrder>> getOrderList(String account, String shipped, String type) {
@@ -44,13 +50,21 @@ public class OrderService {
         // 订单校验
         String msg = checkOrderForm(form);
         if (msg == null) {
+            // 无错误信息，校验要购买的游戏是否全部都能购买
+            List<Long> idList = new ArrayList<>();
+            for (Map<String, String> data : form.getGames()) {
+                idList.add(Long.parseLong(data.get("id")));
+            }
+            if (gameMapper.hasN(idList) != form.getGames().size()) {
+                return ResultUtil.fail("商品序列不正确");
+            }
             // 插入订单
             int insertOrder = orderMapper.insert(form);
             assert insertOrder == 1;
 
             // 插入订单-商品
             int insertGame = orderGameMapper.insertGame(form);
-            assert insertGame == form.getGames().size() && insertGame > 0;
+            assert insertGame == form.getGames().size();
 
             return ResultUtil.success("添加成功", null);
         } else {

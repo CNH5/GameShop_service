@@ -3,6 +3,7 @@ package com.example.game_shop.service;
 import com.example.game_shop.Result.Result;
 import com.example.game_shop.mapper.GameMapper;
 import com.example.game_shop.mapper.GamePictureMapper;
+import com.example.game_shop.mapper.GameTagMapper;
 import com.example.game_shop.pojo.BasicGameInfo;
 import com.example.game_shop.pojo.Game;
 import com.example.game_shop.utils.ResultUtil;
@@ -25,6 +26,9 @@ public class GameService {
 
     @Resource
     private GamePictureMapper pictureMapper;
+
+    @Resource
+    private GameTagMapper tagMapper;
 
 
     /**
@@ -50,7 +54,7 @@ public class GameService {
      * @param platform 游戏平台
      * @param page     页号
      */
-    public Result<List<BasicGameInfo>> queryGame(String name, String platform, int page) {
+    public Result<List<BasicGameInfo>> queryGames(String name, String platform, int page) {
         if (StringUtils.hasLength(platform) && List.of("NS", "PS").contains(platform)) {
             List<BasicGameInfo> gameList = gameMapper.queryGame(name, platform);
             // 步长20

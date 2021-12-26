@@ -32,7 +32,7 @@ public class GameController {
                                                  @RequestParam("platform") String platform,
                                                  @RequestParam(value = "page", defaultValue = "1") int page) {
         try {
-            return gameService.queryGame(name, platform, page);
+            return gameService.queryGames(name, platform, page);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("请求失败,请稍后重试");

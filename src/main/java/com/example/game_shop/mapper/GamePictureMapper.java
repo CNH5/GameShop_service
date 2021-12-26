@@ -27,11 +27,11 @@ public interface GamePictureMapper {
 
     @Insert("""
             <script>
-                insert into game_picture(gid, id, url)
+                insert into game_picture(gid, `index`, url)
                 <foreach collection="list" item="url" index="index" open="values" separator=",">
                     (#{gid}, #{index}, #{url})
                 </foreach>
             </script>
             """)
-    int addPicture(@Param("gid") long gid, @Param("list") List<String> urls);
+    int insertPicture(@Param("gid") long gid, @Param("list") List<String> urls);
 }

@@ -25,6 +25,13 @@ public interface GameMapper {
             """)
     int hasN(List<Long> idList);
 
+    @Select("""
+            select date, price
+            from history_price
+            where gid=#{gid}
+            """)
+    List<Map<String, Object>> getHistoryPriceById(long gid);
+
     @Results(id = "game", value = {
             @Result(property = "id", column = "id"),
             @Result(property = "name", column = "name"),
@@ -36,7 +43,9 @@ public interface GameMapper {
             @Result(property = "images", column = "id",
                     many = @Many(select = "com.example.game_shop.mapper.GamePictureMapper.getPicturesByGameId")),
             @Result(property = "history_price", column = "id",
-                    many = @Many(select = "com.example.game_shop.mapper.HistoryPriceMapper.getHistoryPriceById")),
+                    many = @Many(select = "com.example.game_shop.mapper.GameMapper.getHistoryPriceById")),
+            @Result(property = "tags", column = "id",
+                    many = @Many(select = "com.example.game_shop.mapper.GameTagMapper.getTagsByGameId")),
     })
     @Select("""
             select id,

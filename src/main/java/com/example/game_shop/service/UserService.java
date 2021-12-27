@@ -143,7 +143,10 @@ public class UserService {
      * @return 合规返回true，否则返回false
      */
     private boolean checkForm(String account, String password) {
-        return StringUtils.hasLength(account.trim()) && StringUtils.hasLength(password.trim());
+        return StringUtils.hasLength(account) &&
+                StringUtils.hasLength(account.trim()) &&
+                StringUtils.hasLength(password) &&
+                StringUtils.hasLength(password.trim());
     }
 
     /**

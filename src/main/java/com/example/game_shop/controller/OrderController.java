@@ -25,7 +25,7 @@ public class OrderController {
 
     @GetMapping("/list")
     public Result<List<BasicOrder>> getOrderList(@RequestParam("account") String account,
-                                                 @RequestParam("shipped") String shipped,
+                                                 @RequestParam("shipped") boolean shipped,
                                                  @RequestParam("type") String type) {
         try {
             return orderService.getOrderList(account, shipped, type);

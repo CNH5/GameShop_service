@@ -60,7 +60,7 @@ public class RecyclePackController {
     }
 
     @PostMapping("/selected")
-    public Result<Integer> change(@RequestParam("account") String account,
+    public Result<Integer> selected(@RequestParam("account") String account,
                                   @RequestParam("type") String type,
                                   @RequestParam("idList") String idListString) {
         try {

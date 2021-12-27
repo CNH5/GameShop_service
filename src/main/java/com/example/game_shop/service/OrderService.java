@@ -35,7 +35,7 @@ public class OrderService {
     private GameMapper gameMapper;
 
 
-    public Result<List<BasicOrder>> getOrderList(String account, String shipped, String type) {
+    public Result<List<BasicOrder>> getOrderList(String account, boolean shipped, String type) {
         return ResultUtil.success(orderMapper.getOrderList(account, shipped, type));
     }
 

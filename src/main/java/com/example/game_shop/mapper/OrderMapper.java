@@ -34,7 +34,7 @@ public interface OrderMapper {
                 </where>
             </script>
             """)
-    List<BasicOrder> getOrderList(String account, String shipped, String type);
+    List<BasicOrder> getOrderList(String account, boolean shipped, String type);
 
 
     @Results(id = "order", value = {

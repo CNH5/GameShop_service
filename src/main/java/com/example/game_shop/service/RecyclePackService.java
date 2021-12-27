@@ -1,12 +1,14 @@
 package com.example.game_shop.service;
 
 import com.example.game_shop.Result.Result;
+import com.example.game_shop.mapper.GameMapper;
 import com.example.game_shop.mapper.RecyclePackMapper;
 import com.example.game_shop.pojo.RecyclePackGame;
 import com.example.game_shop.utils.ResultUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,9 @@ import java.util.Map;
 public class RecyclePackService {
     @Resource
     private RecyclePackMapper packMapper;
+
+    @Resource
+    private GameMapper gameMapper;
 
 
     public Result<List<RecyclePackGame>> getGames(String account, String type) {
@@ -49,6 +54,9 @@ public class RecyclePackService {
 
 
     public Result<String> addGame(String account, long gid, int num, String type) {
+        if (gameMapper.hasN(Collections.singletonList(gid)) == 0) {
+            return ResultUtil.fail("添加的游戏不存在");
+        }
         // 很奇怪，断言执行mapper在controller中不能自动提交，但是在测试类里面又可以...
         if (packMapper.query(account, gid, type) == null) {
             int added = packMapper.addGame(account, gid, num, type);
